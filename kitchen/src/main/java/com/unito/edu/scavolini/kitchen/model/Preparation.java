@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 public class Preparation {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private int id;
 
