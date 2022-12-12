@@ -3,6 +3,8 @@ services:
   dbmariadb:
     container_name: mariadb
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
       - scavolini-network
       - scavolini-kitchen-internal
