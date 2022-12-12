@@ -21,7 +21,7 @@ public class KitchenController {
         return preparationList;
     }
 
-    @PostMapping("/preparation/create")
+    @PostMapping(value = "/preparation/create" , consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 
         Preparation _preparation = kitchenRepository.save(new Preparation(preparation.getName(), preparation.getTable()));

@@ -8,27 +8,28 @@ import jakarta.persistence.*;
 public class Preparation {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
-    private String id;
+    private int id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "table")
-    private String table;
+    @Column(name = "tableNum")
+    private String tableNum;
 
     @Column(name = "state")
     private PreparationStatesEnum state;
 
-    public Preparation(String name, String table) {
+    public Preparation(String name, String tableNum) {
         this.name = name;
-        this.table = table;
+        this.tableNum = tableNum;
         this.state = PreparationStatesEnum.WAITING;
     }
 
     public Preparation() {
         this.name = "";
-        this.table = "";
+        this.tableNum = "";
         this.state = PreparationStatesEnum.WAITING;
     }
 
@@ -37,11 +38,11 @@ public class Preparation {
     }
 
     public String getTable() {
-        return table;
+        return tableNum;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void setTable(String tableNum) {
+        this.tableNum = tableNum;
     }
 
     public PreparationStatesEnum getState() {
