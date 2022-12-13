@@ -28,6 +28,7 @@ services:
       - "8080:8080"
     depends_on:
       - dbmariadb
+      - rabbitmq
     networks:
       - scavolini-network
       - scavolini-kitchen-internal
@@ -44,7 +45,6 @@ services:
       - "15672:15672"
     networks:
       - scavolini-network
-      - scavolini-kitchen-internal
     restart: unless-stopped
     volumes:
       - type: volume

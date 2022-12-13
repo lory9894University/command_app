@@ -18,6 +18,7 @@ public class RestController {
     @Autowired
     private RabbitMqSender rabbitMqSender;
 
+    //TODO: test class for rabbitmq, remove
     @GetMapping("/test")
     public void test() {
         rabbitMqSender.send(new Preparation("test", "T2"));
@@ -56,6 +57,9 @@ public class RestController {
         kitchenRepository.delete(preparationToRemove);
     }
 
+    /***
+     * This method is used to add a preparation to the kitchen. sould'nt be used, the kitchen should receive the preparation from rabbitmq
+     */
     @PostMapping(value = "/preparation/create" , consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 
