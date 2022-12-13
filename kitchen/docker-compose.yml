@@ -36,6 +36,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=kitchen
       - SPRING_DATASOURCE_PASSWORD=kitchen
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - MARIA_DB_HOST=mariadb
 
 networks:
     scavolini-network:
