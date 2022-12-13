@@ -21,6 +21,14 @@ public class KitchenController {
         return preparationList;
     }
 
+    @PostMapping("/preparation/changeState")
+    public Preparation changeState(@RequestBody Preparation preparation) {
+        Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparation.getId());
+        preparationToChange.setState(preparation.getState());
+
+        return kitchenRepository.save(preparationToChange);
+    }
+
     @PostMapping(value = "/preparation/create" , consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 

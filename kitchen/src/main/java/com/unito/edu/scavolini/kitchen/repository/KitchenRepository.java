@@ -8,4 +8,6 @@ import java.util.List;
 public interface KitchenRepository extends CrudRepository<Preparation, Long> {
 
     List<Preparation> findAll();
+
+    Preparation findDistinctFirstById(int id);
 }

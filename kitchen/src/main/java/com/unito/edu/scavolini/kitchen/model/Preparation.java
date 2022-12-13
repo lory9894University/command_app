@@ -51,4 +51,8 @@ public class Preparation {
     public void setState(PreparationStatesEnum state) {
         this.state = state;
     }
+
+    public int getId() {
+        return id;
+    }
 }
