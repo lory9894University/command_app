@@ -36,10 +36,24 @@ services:
       - SPRING_DATASOURCE_USERNAME=kitchen
       - SPRING_DATASOURCE_PASSWORD=kitchen
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+      - scavolini-kitchen-internal
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
 networks:
     scavolini-network:
     scavolini-kitchen-internal:
 
 volumes:
     data-mariadb:
+    data-rabbitmq:
