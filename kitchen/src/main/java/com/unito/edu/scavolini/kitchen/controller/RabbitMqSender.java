@@ -1,5 +1,6 @@
 package com.unito.edu.scavolini.kitchen.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class RabbitMqSender {
 
+    //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
+    ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private RabbitTemplate template;
 
@@ -24,7 +28,16 @@ public class RabbitMqSender {
      * @param preparation the preparation that is sent to the queue
      */
     public void send(Preparation preparation) {
-        this.template.convertAndSend(this.queue.getName(), "Jsonificare la preparation");
+
+        //convert the preparation to a json string, try catch in case of malformed object
+        String jsonPreparation = null;
+        try {
+            jsonPreparation = objectMapper.writeValueAsString(preparation);
+             this.template.convertAndSend(this.queue.getName(),jsonPreparation );
         System.out.println(" [x] Sent '" + preparation + "'");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

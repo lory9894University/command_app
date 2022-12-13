@@ -20,3 +20,4 @@ public class RabbitMqConfig {
     }
 
 }
+//https://medium.com/javarevisited/first-steps-with-rabbitmq-and-spring-boot-81d293554703
