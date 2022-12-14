@@ -37,6 +37,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=kitchen
       - SPRING_DATASOURCE_PASSWORD=kitchen
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - MARIA_DB_HOST=mariadb
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -50,10 +52,10 @@ services:
       - type: volume
         source: data-rabbitmq
         target: /var/lib/rabbitmq
+
 networks:
     scavolini-network:
     scavolini-kitchen-internal:
 
 volumes:
     data-mariadb:
-    data-rabbitmq:
