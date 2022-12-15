@@ -23,7 +23,7 @@ services:
   app:
     build: .
     image: scavolini-kitchen
-    container_name: scavolini-kitchen
+    container_name: kitchen
     ports:
       - "8080:8080"
     depends_on:
@@ -35,6 +35,7 @@ services:
     environment:
       - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=kitchen
 
   rabbitmq:
     image: rabbitmq:3-management
