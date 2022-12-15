@@ -1,0 +1,61 @@
+version: "3.2"
+services:
+  dbmariadb:
+    container_name: db-kitchen
+    image: "mariadb"
+    ports:
+      - "3306:3306"
+    networks:
+      - scavolini-network
+      - scavolini-kitchen-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: kitchen
+      MARIADB_PASSWORD: kitchen
+      MARIADB_DATABASE: scavolini-kitchen
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-mariadb
+        target: /data
+        volume:
+          nocopy: true
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
+
+  kitchen:
+    build: ./kitchen/
+    image: scavolini-kitchen
+    container_name: kitchen
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbmariadb
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-kitchen-internal
+    environment:
+      - MARIA_DB_HOST=db-kitchen
+      - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=kitchen
+
+
+networks:
+    scavolini-network:
+    scavolini-kitchen-internal:
+
+volumes:
+    data-mariadb:
+    data-rabbitmq:
