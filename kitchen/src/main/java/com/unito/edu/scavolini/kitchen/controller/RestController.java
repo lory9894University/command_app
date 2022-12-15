@@ -1,16 +1,23 @@
 package com.unito.edu.scavolini.kitchen.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 public class RestController {
+
+    //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private KitchenRepository kitchenRepository;
@@ -35,13 +42,28 @@ public class RestController {
     /***
      * Get a preparation and changes its state accordingly. If the state is changed to "READY" the preparation is sent to RabbitMQ
      */
+    @Value("${waiter_microservice_url}")
+    private String waiter_microservice_url;
+
     @PostMapping("/preparation/changeState")
     public Preparation changeState(@RequestBody Preparation preparation) {
         Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparation.getId());
         preparationToChange.setState(preparation.getState());
 
         if (preparationToChange.getState() == PreparationStatesEnum.READY) {
-            rabbitMqSender.send(preparationToChange);
+            String jsonPreparation = null;
+        try {
+            //convert the preparation in JSON format
+            jsonPreparation = objectMapper.writeValueAsString(preparation);
+            //send it via post request to the waiter microservice
+            RestTemplate restTemplate = new RestTemplate();
+            URI uri = new URI("http://"+waiter_microservice_url+"/api/preparation/create");
+            restTemplate.postForEntity(uri, jsonPreparation, String.class);
+            System.out.println(" [x] Sent '" + preparation + "'");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         }
         kitchenRepository.save(preparationToChange);
 
