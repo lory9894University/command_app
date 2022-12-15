@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/waiter")
+@RequestMapping("/waiter")
 public class WaiterController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class WaiterController {
         return waiterRepository.save(preparationToChange);
     }
 
-    @PostMapping(value = "/preparation/create", consumes = "application/json")
+    @PostMapping(value = "/preparation/create")
     public Preparation postPreparation(@RequestParam String name,
                                        @RequestParam String tableNum) {
 
