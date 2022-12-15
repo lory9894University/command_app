@@ -33,10 +33,6 @@ services:
       - scavolini-network
       - scavolini-kitchen-internal
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/scavolini-kitchen
-      - SPRING_DATASOURCE_USERNAME=kitchen
-      - SPRING_DATASOURCE_PASSWORD=kitchen
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - MARIA_DB_HOST=mariadb
       - RABBITMQ_HOST=rabbitmq
 
