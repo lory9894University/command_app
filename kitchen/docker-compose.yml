@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   dbmariadb:
-    container_name: mariadb
+    container_name: db-kitchen
     image: "mariadb"
     ports:
       - "3306:3306"
@@ -33,7 +33,7 @@ services:
       - scavolini-network
       - scavolini-kitchen-internal
     environment:
-      - MARIA_DB_HOST=mariadb
+      - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
 
   rabbitmq:
