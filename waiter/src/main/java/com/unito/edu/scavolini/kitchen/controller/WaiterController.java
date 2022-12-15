@@ -1,6 +1,5 @@
 package com.unito.edu.scavolini.kitchen.controller;
 
-import com.unito.edu.scavolini.kitchen.enums.PreparationFor;
 import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.WaiterRepository;
@@ -17,7 +16,7 @@ public class WaiterController {
     private WaiterRepository waiterRepository;
 
     @GetMapping("/preparations")
-    public List<Preparation> getAllPreparations(){
+    public List<Preparation> getAllPreparations() {
 
         return waiterRepository.findAll();
     }
@@ -31,11 +30,11 @@ public class WaiterController {
         return waiterRepository.save(preparationToChange);
     }
 
-    @PostMapping(value = "/preparation/create" , consumes = "application/json")
+    @PostMapping(value = "/preparation/create", consumes = "application/json")
     public Preparation postPreparation(@RequestParam String name,
                                        @RequestParam String tableNum) {
 
-        return waiterRepository.save(new Preparation(name, tableNum, PreparationFor.WAITER));
+        return waiterRepository.save(new Preparation(name, tableNum));
     }
 
 }
