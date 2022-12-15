@@ -1,6 +1,5 @@
-package com.unito.edu.scavolini.kitchen;
+package com.unito.edu.scavolini.waiter;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest

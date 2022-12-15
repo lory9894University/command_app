@@ -1,4 +1,4 @@
-package com.unito.edu.scavolini.kitchen.enums;
+package com.unito.edu.scavolini.waiter.enums;
 
 public enum PreparationStatesEnum {
     TO_DELIVER,
