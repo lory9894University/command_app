@@ -28,6 +28,7 @@ services:
       - "8080:8080"
     depends_on:
       - dbmariadb
+      - rabbitmq
     networks:
       - scavolini-network
       - scavolini-kitchen-internal
@@ -37,6 +38,21 @@ services:
       - SPRING_DATASOURCE_PASSWORD=kitchen
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - MARIA_DB_HOST=mariadb
+      - RABBITMQ_HOST=rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
 
 networks:
     scavolini-network:
@@ -44,3 +60,4 @@ networks:
 
 volumes:
     data-mariadb:
+    data-rabbitmq:
