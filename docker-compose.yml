@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
     volumes:
       - type: volume
-        source: data-mariadb
+        source: data-db-kitchen
         target: /data
         volume:
           nocopy: true
@@ -50,13 +50,13 @@ services:
     environment:
       - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
-      - WAITER_HOST=kitchen
+      - WAITER_HOST=waiter
 
   db-waiter:
       container_name: mariadb_waiter
       image: "mariadb"
       ports:
-        - "3306:3307"
+        - "3307:3306"
       networks:
         - scavolini-network
         - scavolini-waiter-internal
@@ -68,7 +68,7 @@ services:
       restart: unless-stopped
       volumes:
         - type: volume
-          source: data-mariadb
+          source: data-db-waiter
           target: /data
           volume:
             nocopy: true
@@ -76,13 +76,15 @@ services:
   waiter:
     build: ./waiter/
     image: scavolini-waiter
-    container_name: scavolini-waiter
+    container_name: waiter
     environment:
       MARIADB_HOST: mariadb_waiter
+      KITCHEN_HOST: kitchen
     ports:
-      - "8080:8081"
+      - "8081:8080"
     depends_on:
       - db-waiter
+      - rabbitmq
     networks:
       - scavolini-network
       - scavolini-waiter-internal
@@ -92,7 +94,9 @@ services:
 networks:
     scavolini-network:
     scavolini-kitchen-internal:
+    scavolini-waiter-internal:
 
 volumes:
-    data-mariadb:
+    data-db-kitchen:
+    data-db-waiter:
     data-rabbitmq:

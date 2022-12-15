@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
+
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/kitchen")
@@ -36,20 +39,25 @@ public class RestController {
     private String waiter_microservice_url;
 
     @PostMapping("/preparation/changeState")
-    public Preparation changeState(@RequestBody Preparation preparation) {
-        Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparation.getId());
-        preparationToChange.setState(preparation.getState());
+    public Preparation changeState(@RequestParam int preparationId,
+                                   @RequestParam PreparationStatesEnum new_state) {
+        System.out.println("Received <" + preparationId + ">");
+        System.out.println("Received <" + new_state + ">");
+        Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparationId);
+        preparationToChange.setState(new_state);
 
         if (preparationToChange.getState() == PreparationStatesEnum.READY) {
             String jsonPreparation = null;
         try {
             //convert the preparation in JSON format
-            jsonPreparation = objectMapper.writeValueAsString(preparation);
+            jsonPreparation = objectMapper.writeValueAsString(preparationToChange);
             //send it via post request to the waiter microservice
-            RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI("http://"+waiter_microservice_url+"/waiter/preparation/create");
-            restTemplate.postForEntity(uri, jsonPreparation, String.class);
-            System.out.println(" [x] Sent '" + preparation + "'");
+            Jsoup.connect("http://"+waiter_microservice_url+"/waiter/preparation/create?name="+preparationToChange.getName()+"&tableNum="+preparationToChange.getTable())
+            .method(Connection.Method.POST)
+            .header("Content-Type", "application/json")
+            .data("json", jsonPreparation)
+            .execute();
+            System.out.println(" [x] Sent '" + jsonPreparation + "'");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,8 +72,8 @@ public class RestController {
      * This method is used to remove preparation to the kitchen, when a waiter picks up the order remove the preparation from the kitchen
      */
     @PostMapping("/preparation/remove")
-    public void removePreparation(@RequestBody Preparation preparation) {
-        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparation.getId());
+    public void removePreparation(@RequestBody int preparationId) {
+        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparationId);
         kitchenRepository.delete(preparationToRemove);
     }
 
