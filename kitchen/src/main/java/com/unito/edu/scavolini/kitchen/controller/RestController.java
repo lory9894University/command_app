@@ -39,12 +39,9 @@ public class RestController {
     private String waiter_microservice_url;
 
     @PostMapping("/preparation/changeState")
-    public Preparation changeState(@RequestParam int preparationId,
-                                   @RequestParam PreparationStatesEnum new_state) {
-        System.out.println("Received <" + preparationId + ">");
-        System.out.println("Received <" + new_state + ">");
-        Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparationId);
-        preparationToChange.setState(new_state);
+    public Preparation changeState(@RequestBody Preparation preparation) {
+        Preparation preparationToChange = kitchenRepository.findDistinctFirstById(preparation.getId());
+        preparationToChange.setState(preparation.getState());
 
         if (preparationToChange.getState() == PreparationStatesEnum.READY) {
             String jsonPreparation = null;
@@ -52,7 +49,7 @@ public class RestController {
             //convert the preparation in JSON format
             jsonPreparation = objectMapper.writeValueAsString(preparationToChange);
             //send it via post request to the waiter microservice
-            Jsoup.connect("http://"+waiter_microservice_url+"/waiter/preparation/create?name="+preparationToChange.getName()+"&tableNum="+preparationToChange.getTable())
+            Jsoup.connect("http://"+waiter_microservice_url+"/waiter/preparation/create")
             .method(Connection.Method.POST)
             .header("Content-Type", "application/json")
             .data("json", jsonPreparation)

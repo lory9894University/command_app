@@ -1,6 +1,5 @@
 package com.unito.edu.scavolini.kitchen.controller;
 
-import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.WaiterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +21,17 @@ public class WaiterController {
     }
 
     @PostMapping("/preparation/changeState")
-    public Preparation changeState(@RequestParam int preparationId,
-                                   @RequestParam PreparationStatesEnum new_state) {
-        Preparation preparationToChange = waiterRepository.findDistinctFirstById(preparationId);
-        preparationToChange.setState(new_state);
+    public Preparation changeState(@RequestBody Preparation preparation) {
+        Preparation preparationToChange = waiterRepository.findDistinctFirstById(preparation.getId());
+        preparationToChange.setState(preparation.getState());
 
         return waiterRepository.save(preparationToChange);
     }
 
     @PostMapping(value = "/preparation/create")
-    public Preparation postPreparation(@RequestParam String name,
-                                       @RequestParam String tableNum) {
+    public Preparation postPreparation(@RequestBody Preparation preparation) {
 
-        return waiterRepository.save(new Preparation(name, tableNum));
+        return waiterRepository.save(new Preparation(preparation.getName(), preparation.getTable()));
     }
 
 }
