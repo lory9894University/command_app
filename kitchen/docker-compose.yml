@@ -20,7 +20,7 @@ services:
         target: /data
         volume:
           nocopy: true
-  app:
+  kitchen:
     build: .
     image: scavolini-kitchen
     container_name: kitchen
