@@ -8,8 +8,11 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.net.URI;
 import java.util.List;
@@ -47,14 +50,22 @@ public class RestController {
             String jsonPreparation = null;
         try {
             //convert the preparation in JSON format
-            jsonPreparation = objectMapper.writeValueAsString(preparationToChange);
+            //TODO: VAFFANCULO, IL JSON PARSATO A MANO È UNA MERDA, daltro canto bisogrebbe passare a jacson la preparazione senza state e non so farlo
+            jsonPreparation = "{" +
+                    "\"name\":\"" + preparationToChange.getName() + "\"," +
+                    "\"table\":\"" + preparationToChange.getTable() + "\"" +
+                    "}";
+
+
+            System.out.println(" [x] Sending '" + jsonPreparation + "'");
+
             //send it via post request to the waiter microservice
-            Jsoup.connect("http://"+waiter_microservice_url+"/waiter/preparation/create")
-            .method(Connection.Method.POST)
-            .header("Content-Type", "application/json")
-            .data("json", jsonPreparation)
-            .execute();
-            System.out.println(" [x] Sent '" + jsonPreparation + "'");
+            RestTemplate restTemplate = new RestTemplate();
+            URI uri = new URI("http://"+ waiter_microservice_url + "/waiter/preparation/create");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+             HttpEntity<String> request = new HttpEntity<String>(jsonPreparation, headers);
+            restTemplate.postForEntity(uri, request, String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
