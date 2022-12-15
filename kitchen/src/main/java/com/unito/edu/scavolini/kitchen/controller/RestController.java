@@ -22,16 +22,6 @@ public class RestController {
     @Autowired
     private KitchenRepository kitchenRepository;
 
-    @Autowired
-    private RabbitMqSender rabbitMqSender;
-
-    //TODO: test class for rabbitmq, remove
-    @GetMapping("/test")
-    public void test() {
-        rabbitMqSender.send(new Preparation("test", "T2"));
-
-    }
-
     @GetMapping("/preparations")
     public List<Preparation> getAllPreparations(){
         List<Preparation> preparationList = kitchenRepository.findAll();
@@ -57,7 +47,7 @@ public class RestController {
             jsonPreparation = objectMapper.writeValueAsString(preparation);
             //send it via post request to the waiter microservice
             RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI("http://"+waiter_microservice_url+"/api/preparation/create");
+            URI uri = new URI("http://"+waiter_microservice_url+"/waiter/preparation/create");
             restTemplate.postForEntity(uri, jsonPreparation, String.class);
             System.out.println(" [x] Sent '" + preparation + "'");
         } catch (Exception e) {
