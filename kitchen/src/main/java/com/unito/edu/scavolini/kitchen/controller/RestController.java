@@ -13,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
-@RequestMapping("/api")
+@RequestMapping("/kitchen")
 public class RestController {
 
     //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
