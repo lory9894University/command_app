@@ -10,4 +10,5 @@ public interface WaiterRepository extends CrudRepository<Preparation, Long> {
     List<Preparation> findAll();
 
     Preparation findDistinctFirstById(int id);
+
 }
