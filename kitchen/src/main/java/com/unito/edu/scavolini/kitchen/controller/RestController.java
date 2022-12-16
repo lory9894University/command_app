@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -81,7 +79,7 @@ public class RestController {
      */
     @PostMapping("/preparation/remove")
     public void removePreparation(@RequestBody Preparation preparation) {
-        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparation.getId());
+        Preparation preparationToRemove = kitchenRepository.findDistinctFirstByNameAndTableNum(preparation.getName(), preparation.getTable());
         kitchenRepository.delete(preparationToRemove);
     }
 
