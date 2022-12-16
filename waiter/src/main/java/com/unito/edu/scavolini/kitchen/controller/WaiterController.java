@@ -24,9 +24,17 @@ public class WaiterController {
     public Preparation changeState(@RequestBody Preparation preparation) {
         Preparation preparationToChange = waiterRepository.findDistinctFirstById(preparation.getId());
         preparationToChange.setState(preparation.getState());
+        waiterRepository.save(preparationToChange);
 
-        return waiterRepository.save(preparationToChange);
+        return preparationToChange;
     }
+
+    @PostMapping("/preparation/remove")
+    public void removePreparation(@RequestBody Preparation preparation) {
+        Preparation preparationToRemove = waiterRepository.findDistinctFirstById(preparation.getId());
+        waiterRepository.delete(preparationToRemove);
+    }
+
 
     @PostMapping(value = "/preparation/create")
     public Preparation postPreparation(@RequestBody Preparation preparation) {

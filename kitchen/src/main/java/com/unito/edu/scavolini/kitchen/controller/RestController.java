@@ -80,8 +80,8 @@ public class RestController {
      * This method is used to remove preparation to the kitchen, when a waiter picks up the order remove the preparation from the kitchen
      */
     @PostMapping("/preparation/remove")
-    public void removePreparation(@RequestBody int preparationId) {
-        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparationId);
+    public void removePreparation(@RequestBody Preparation preparation) {
+        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparation.getId());
         kitchenRepository.delete(preparationToRemove);
     }
 
