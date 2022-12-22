@@ -1,7 +1,6 @@
-package com.unito.edu.scavolini.waiter.rabbitMqConfig;
+package com.unito.edu.scavolini.waiter.rabbitMq;
 
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +11,16 @@ import org.springframework.context.annotation.Configuration;
  * but still if this file is removed the queue will not be created on RabbitMq and if the queue is not created by another service the RabbitMqReceiver will not work.
  */
 @Configuration
-@EnableRabbit
 public class RabbitMqConfig {
 
     @Bean
-    public Queue queue() {
+    public Queue deliveredPreparationsQueue() {
         return new Queue("deliveredPreparations",true);
+    }
+
+    @Bean
+    public DeliveredPreparationSender sender() {
+        return new DeliveredPreparationSender();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.unito.edu.scavolini.waiter.controller;
+package com.unito.edu.scavolini.waiter.rabbitMq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.waiter.model.Preparation;
@@ -8,7 +8,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.stereotype.Component;
 
 /***
- * This class is used to send a message to the queue on rabbitmq, just uses a template (injected by spring, i don't actually know how it works) and a queue (also injected by spring)
+ * This class is used to send a message to the queue on rabbitmq, just uses a template (injected by spring, I don't actually know how it works) and a queue (also injected by spring)
  * The queue is the one that is used to send the message to the queue on rabbitmq, and it's configured in the RabbitMqConfig class
  */
 @Component
@@ -28,9 +28,10 @@ public class DeliveredPreparationSender {
      * @param preparation the preparation that is sent to the queue
      */
     public void send(Preparation preparation) {
+        System.out.println("Sending preparation: " + preparation);
 
         //convert the preparation to a json string, try catch in case of malformed object
-        String jsonPreparation = null;
+        String jsonPreparation;
         try {
             jsonPreparation = objectMapper.writeValueAsString(preparation);
             this.template.convertAndSend(this.queue.getName(),jsonPreparation );

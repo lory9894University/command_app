@@ -1,0 +1,20 @@
+### Create new preparation
+POST http://localhost:8080/api/waiter/preparation/create
+content-type: application/json
+
+{
+  "name": "pizza di Petrone",
+  "tableNum": 1
+}
+
+### Change state of preparation
+POST http://localhost:8080/api/waiter/preparation/changeState
+content-type: application/json
+
+{
+  "preparationId": 1,
+  "newState": "DELIVERED"
+}
+
+### Get all preparations
+GET http://localhost:8080/api/waiter/preparations
