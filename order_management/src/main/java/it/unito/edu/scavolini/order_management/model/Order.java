@@ -26,11 +26,11 @@ public class Order {
     @Column(name = "payment_type")
     private PaymentTypeEnum paymentType;
 
-    @OneToMany(mappedBy = "order")
+//    @OneToMany(mappedBy = "order")
+    @Transient
     private List<Preparation> preparationList;
 
-    public Order(String tableNum, double total, OrderStateEnum state, PaymentTypeEnum paymentType,
-                 List<Preparation> preparationList) {
+    public Order(String tableNum, double total, OrderStateEnum state, PaymentTypeEnum paymentType) {
         this.tableNum = tableNum;
         this.total = total;
         this.state = state;
@@ -96,5 +96,21 @@ public class Order {
 
     public void setPreparationList(List<Preparation> preparationList) {
         this.preparationList = preparationList;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (Preparation p : preparationList) {
+            sb.append(p.toString() + "\n\t");
+        }
+
+        return "Order [" +
+            "\n\tid=" + order_id +
+            "\n\ttableNum=" + tableNum +
+            "\n\ttotal=" + total +
+            "\n\tstate=" + state +
+            "\n\tpaymentType=" + paymentType +
+            "\n\tpreparationList=\n\t" + sb + "]";
     }
 }

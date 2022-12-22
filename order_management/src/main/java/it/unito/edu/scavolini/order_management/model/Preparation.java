@@ -24,10 +24,11 @@ public class Preparation {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    public Preparation(String name, String tableNum) {
+    public Preparation(String name, String tableNum, Order order) {
         this.name = name;
         this.tableNum = tableNum;
         this.state = PreparationStatesEnum.WAITING;
+        this.order = order;
     }
 
     public Preparation() {
@@ -40,7 +41,7 @@ public class Preparation {
         return name;
     }
 
-    public String getTable() {
+    public String getTableNum() {
         return tableNum;
     }
 
@@ -58,5 +59,21 @@ public class Preparation {
 
     public int getId() {
         return preparation_id;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public String toString() {
+        return "Preparation [" +
+            "\n\t\tid=" + preparation_id +
+            "\n\t\tname=" + name +
+            "\n\t\ttable=" + tableNum +
+            "\n\t\tstate=" + state + "]";
     }
 }
