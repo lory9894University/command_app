@@ -33,9 +33,9 @@ services:
       - scavolini-network
       - scavolini-order-internal
     environment:
-      - MARIA_DB_HOST=db-kitchen
+      - MARIA_DB_HOST=db-order
       - RABBITMQ_HOST=rabbitmq
-      - WAITER_HOST=kitchen
+      - WAITER_HOST=waiter
 
   rabbitmq:
     image: rabbitmq:3-management
