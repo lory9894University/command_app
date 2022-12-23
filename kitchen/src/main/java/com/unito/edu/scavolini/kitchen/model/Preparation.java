@@ -1,6 +1,6 @@
-package com.unito.edu.scavolini.kitchen.model;
+package com.unito.edu.scavolini.waiter.model;
 
-import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
+import com.unito.edu.scavolini.waiter.enums.PreparationStatesEnum;
 import jakarta.persistence.*;
 
 @Entity

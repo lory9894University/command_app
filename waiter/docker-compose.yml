@@ -30,9 +30,23 @@ services:
       - "8080:8080"
     depends_on:
       - dbmariadb
+      - rabbitmq
     networks:
       - scavolini-network
       - scavolini-waiter-internal
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
 
 networks:
   scavolini-network:
@@ -40,3 +54,4 @@ networks:
 
 volumes:
   data-mariadb:
+  data-rabbitmq:
