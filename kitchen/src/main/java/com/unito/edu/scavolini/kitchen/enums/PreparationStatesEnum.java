@@ -1,4 +1,4 @@
-package com.unito.edu.scavolini.waiter.enums;
+package com.unito.edu.scavolini.kitchen.enums;
 
 public enum PreparationStatesEnum {
     WAITING,
