@@ -1,0 +1,24 @@
+### Create new preparation
+POST http://localhost:8080/kitchen/preparation/create
+content-type: application/json
+
+{
+  "name": "pizza di Petrone",
+  "tableNum": 1
+}
+
+### Get all preparations
+GET http://localhost:8080/kitchen/preparations
+
+### Change state of preparation
+POST http://localhost:8080/kitchen/preparation/changeState
+content-type: application/json
+
+{
+  "id": 1,
+  "tableNum": 1,
+  "state": "READY"
+}
+
+### Get all preparations
+GET http://localhost:8081/waiter/preparations
