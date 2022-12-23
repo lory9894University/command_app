@@ -14,6 +14,23 @@ services:
         source: data-rabbitmq
         target: /var/lib/rabbitmq
 
+  api_gateway:
+    build: .
+    image: api_gateway
+    container_name: api_gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kitchen
+      - waiter
+    networks:
+      - scavolini-network
+    environment:
+      - WAITER_HOST=waiter
+      - WAITER_PORT=8080
+      - KITCHEN_HOST=kitchen
+      - KITCHEN_PORT=8080
+
   db-kitchen:
     container_name: db-kitchen
     image: "mariadb"
@@ -36,7 +53,7 @@ services:
           nocopy: true
 
   kitchen:
-    build: ./kitchen/
+    build: ../kitchen/
     image: scavolini-kitchen
     container_name: kitchen
     ports:
@@ -74,7 +91,7 @@ services:
             nocopy: true
 
   waiter:
-    build: ./waiter/
+    build: ../waiter/
     image: scavolini-waiter
     container_name: waiter
     environment:
