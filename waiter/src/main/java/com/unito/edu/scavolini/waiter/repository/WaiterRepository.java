@@ -1,6 +1,6 @@
-package com.unito.edu.scavolini.kitchen.repository;
+package com.unito.edu.scavolini.waiter.repository;
 
-import com.unito.edu.scavolini.kitchen.model.Preparation;
+import com.unito.edu.scavolini.waiter.model.Preparation;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

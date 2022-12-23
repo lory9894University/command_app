@@ -1,7 +1,9 @@
-package com.unito.edu.scavolini.kitchen.controller;
+package com.unito.edu.scavolini.waiter.controller;
 
-import com.unito.edu.scavolini.kitchen.model.Preparation;
-import com.unito.edu.scavolini.kitchen.repository.WaiterRepository;
+import com.unito.edu.scavolini.waiter.enums.PreparationStatesEnum;
+import com.unito.edu.scavolini.waiter.model.Preparation;
+import com.unito.edu.scavolini.waiter.rabbitMq.DeliveredPreparationSender;
+import com.unito.edu.scavolini.waiter.repository.WaiterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -16,6 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/waiter")
 public class WaiterController {
+
+    DeliveredPreparationSender deliveredPreparationSender = new DeliveredPreparationSender();
+
 
     @Autowired
     private WaiterRepository waiterRepository;
@@ -56,8 +61,14 @@ public class WaiterController {
             e.printStackTrace();
         }
 
+         if (preparationToChange.getState() == PreparationStatesEnum.DELIVERED){
+            // if preparation gets state delivered send message to queue
+            deliveredPreparationSender.send(preparationToChange);
+        }
+
         return preparationToChange;
     }
+
 
 
     @PostMapping(value = "/preparation/create")
