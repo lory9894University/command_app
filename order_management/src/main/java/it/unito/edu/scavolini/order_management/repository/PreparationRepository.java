@@ -5,11 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-/***
- * Class used to test TODO delete
- */
-public interface KitchenRepository extends CrudRepository<Preparation, Long> {
+
+public interface PreparationRepository extends CrudRepository<Preparation, Long> {
 
     List<Preparation> findAll();
+
+    Preparation findDistinctFirstById(Long id);
 
 }
