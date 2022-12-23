@@ -1,18 +1,26 @@
 package it.unito.edu.scavolini.order_management.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import it.unito.edu.scavolini.order_management.enums.OrderStateEnum;
+import it.unito.edu.scavolini.order_management.enums.OrderTypeEnum;
+import it.unito.edu.scavolini.order_management.enums.PaymentStateEnum;
 import it.unito.edu.scavolini.order_management.enums.PaymentTypeEnum;
 import jakarta.persistence.*;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "order")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int order_id;
+    private Long id;
 
     @Column(name = "table_num")
     private String tableNum;
@@ -20,69 +28,28 @@ public class Order {
     @Column(name = "total")
     private double total;
 
-    @Column(name = "state")
-    private OrderStateEnum state;
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @Column(name = "date_time")
+    private LocalDateTime dateTime;
+
+    @Column(name = "payment_state")
+    private PaymentStateEnum paymentState;
 
     @Column(name = "payment_type")
     private PaymentTypeEnum paymentType;
 
-//    @OneToMany(mappedBy = "order")
+    @Column(name = "order_type")
+    private OrderTypeEnum orderType;
+
+    @Column(name = "state")
+    private OrderStateEnum orderState;
+
     @Transient
+    @OneToMany(mappedBy = "order")
     private List<Preparation> preparationList;
 
-    public Order(String tableNum, double total, OrderStateEnum state, PaymentTypeEnum paymentType) {
-        this.tableNum = tableNum;
-        this.total = total;
-        this.state = state;
-        this.paymentType = paymentType;
-    }
-
-    public Order() {
-        this.tableNum = "null";
-        this.total = -1;
-        this.state = OrderStateEnum.UNPAID;
-        this.paymentType = PaymentTypeEnum.ONLINE;
-    }
-
-    public int getId() {
-        return order_id;
-    }
-
-    public String getTableNum() {
-        return tableNum;
-    }
-
-    public void setTableNum(String tableNum) {
-        this.tableNum = tableNum;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public OrderStateEnum getState() {
-        return state;
-    }
-
-    public void setState(OrderStateEnum state) {
-        this.state = state;
-    }
-
-    public PaymentTypeEnum getPaymentType() {
-        return paymentType;
-    }
-
-    public void setPaymentType(PaymentTypeEnum paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public List<Preparation> getPreparationList() {
-        return preparationList;
-    }
+    @OneToOne(mappedBy = "order")
+    private Reservation reservation;
 
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);
@@ -94,10 +61,6 @@ public class Order {
         return this.preparationList;
     }
 
-    public void setPreparationList(List<Preparation> preparationList) {
-        this.preparationList = preparationList;
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -106,10 +69,10 @@ public class Order {
         }
 
         return "Order [" +
-            "\n\tid=" + order_id +
+            "\n\tid=" + id +
             "\n\ttableNum=" + tableNum +
             "\n\ttotal=" + total +
-            "\n\tstate=" + state +
+            "\n\tstate=" + paymentState +
             "\n\tpaymentType=" + paymentType +
             "\n\tpreparationList=\n\t" + sb + "]";
     }
