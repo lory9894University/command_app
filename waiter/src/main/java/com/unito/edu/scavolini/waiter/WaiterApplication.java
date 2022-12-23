@@ -1,4 +1,4 @@
-package com.unito.edu.scavolini.kitchen;
+package com.unito.edu.scavolini.waiter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
