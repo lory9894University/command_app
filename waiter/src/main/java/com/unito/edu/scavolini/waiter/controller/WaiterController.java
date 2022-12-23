@@ -17,6 +17,9 @@ import java.util.List;
 @RequestMapping("/waiter")
 public class WaiterController {
 
+    DeliveredPreparationSender deliveredPreparationSender = new DeliveredPreparationSender();
+
+
     @Autowired
     private WaiterRepository waiterRepository;
     @Value("${kitchen_microservice_url}")
@@ -56,8 +59,14 @@ public class WaiterController {
             e.printStackTrace();
         }
 
+         if (preparationToChange.getState() == PreparationStatesEnum.DELIVERED){
+            // if preparation gets state delivered send message to queue
+            deliveredPreparationSender.send(preparationToChange);
+        }
+
         return preparationToChange;
     }
+
 
 
     @PostMapping(value = "/preparation/create")
