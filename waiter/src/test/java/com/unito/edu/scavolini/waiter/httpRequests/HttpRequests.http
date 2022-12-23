@@ -1,5 +1,5 @@
 ### Create new preparation
-POST http://localhost:8080/api/waiter/preparation/create
+POST http://localhost:8080/kitchen/preparation/create
 content-type: application/json
 
 {
@@ -7,14 +7,18 @@ content-type: application/json
   "tableNum": 1
 }
 
+### Get all preparations
+GET http://localhost:8080/kitchen/preparations
+
 ### Change state of preparation
-POST http://localhost:8080/api/waiter/preparation/changeState
+POST http://localhost:8080/kitchen/preparation/changeState
 content-type: application/json
 
 {
-  "preparationId": 1,
-  "newState": "DELIVERED"
+  "id": 1,
+  "tableNum": 1,
+  "state": "READY"
 }
 
 ### Get all preparations
-GET http://localhost:8080/api/waiter/preparations
+GET http://localhost:8081/waiter/preparations
