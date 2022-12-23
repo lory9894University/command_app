@@ -18,5 +18,15 @@ public class RabbitMqConfig {
         return new Queue("kitchen",true);
     }
 
+    @Bean
+    public Queue preorderQueue() {
+        return new Queue("preorder",true);
+    }
+
+    @Bean
+    public Queue deliveredPreparationsQueue() {
+        return new Queue("deliveredPreparations",true);
+    }
+
 }
 //https://medium.com/javarevisited/first-steps-with-rabbitmq-and-sping-boot-81d293554703

@@ -1,35 +1,45 @@
 package it.unito.edu.scavolini.order_management.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.unito.edu.scavolini.order_management.model.Preparation;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Component
 public class RabbitMqSender {
-
-    Gson gson = new Gson();
 
     @Autowired
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private final Queue queue;
+    private final Queue kitchenQueue;
 
-    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue queue) {
+    @Autowired
+    private final Queue deliveredPreparationsQueue;
+
+    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue kitchenQueue, Queue deliveredPreparationsQueue) {
         this.rabbitTemplate = rabbitTemplate;
-        this.queue = queue;
+        this.kitchenQueue = kitchenQueue;
+        this.deliveredPreparationsQueue = deliveredPreparationsQueue;
     }
 
     public void send(Preparation preparation) {
 
-        //convert the preparation to a json string
-        String jsonPreparation = gson.toJson(preparation);
-        this.rabbitTemplate.convertAndSend(this.queue.getName(), jsonPreparation);
-        System.out.println(" [x] Sent '" + preparation + "'");
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
 
+        String jsonPreparation = null;
+        try {
+            jsonPreparation = objectMapper.writeValueAsString(preparation);
+            this.rabbitTemplate.convertAndSend(this.kitchenQueue.getName(), jsonPreparation);
+            System.out.println(" [x] Sent '" + preparation + "'");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
