@@ -28,9 +28,13 @@ public class RabbitMqReceiver {
     @Autowired
     private OrderRepository orderRepository;
 
+    /**
+     * Method to add to kitchen microservice.
+     * Used to receive the preparation sent from order management microservice.
+     * */
     @RabbitListener(queues = "kitchen")
     public void receiveMessageKitchen(@Payload String message) {
-        System.out.println("Received <" + message + ">");
+        System.out.println("\n\n[R] Received <" + message + ">");
 
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -44,7 +48,7 @@ public class RabbitMqReceiver {
             newPreparation.setOrder(preparation.getOrder());
             newPreparation.setState(preparation.getState());
 
-            preparationRepository.save(newPreparation);
+            //preparationRepository.save(newPreparation);
 
          } catch (Exception e) {
             e.printStackTrace();
@@ -53,18 +57,23 @@ public class RabbitMqReceiver {
 
     /**
      * Receive message from waiter on deliveredPreparation queue to mark
-     * the preparation as delivered and delete it from the DB
+     * the preparation as delivered and update it in the DB
+     *
+     * NOTE: should not still be deleted, cause it could still be needed for the payment
      * */
     @RabbitListener(queues = "deliveredPreparations")
-    public void deleteDeliveredPreparation(@Payload String message) {
-        System.out.println("\n\nReceived <" + message + ">");
+    public void markDeliveredPreparation(@Payload String message) {
+        System.out.println("\n\n[R] Received <" + message + ">");
 
         try {
             Preparation preparation = objectMapper.readValue(message, Preparation.class);
             System.out.println("\nPreparation:\n <" + preparation + ">");
 
-            Preparation dbPreparation = preparationRepository.findDistinctFirstById(preparation.getId());
-            preparationRepository.delete(dbPreparation);
+            Preparation dbPreparation = preparationRepository.findDistinctFirstByNameAndTableNum(
+                preparation.getName(), preparation.getTableNum());
+
+            dbPreparation.setState(PreparationStatesEnum.DELIVERED);
+            preparationRepository.save(dbPreparation);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,33 +86,21 @@ public class RabbitMqReceiver {
      * */
     @RabbitListener(queues = "preorder")
     public void receivePreorder(@Payload String message) {
-        System.out.println("Received <" + message + ">");
+        System.out.println("\n\nReceived <" + message + ">");
 
         objectMapper.registerModule(new JavaTimeModule());
 
         try {
             Order order = objectMapper.readValue(message, Order.class);
-            System.out.println("Order:\n <" + order + ">");
-
-            Order newOrder = new Order();
-            newOrder.setTableNum(order.getTableNum());
-            newOrder.setPaymentType(order.getPaymentType());
-            newOrder.setPaymentState(order.getPaymentState());
-            newOrder.setTotal(order.getTotal());
-            newOrder.setOrderType(order.getOrderType());
-            newOrder.setOrderState(order.getOrderState());
-
-//            if (order.getReservation() != null) {
-//                newOrder.setReservation(order.getReservation());
-//            }
+            System.out.println("\nOrder:\n <" + order + ">");
 
             if (order.getDateTime() == null) {
-                newOrder.setDateTime(LocalDateTime.now());
+                order.setDateTime(LocalDateTime.now());
             } else {
-                newOrder.setDateTime(order.getDateTime());
+                order.setDateTime(order.getDateTime());
             }
 
-            Order savedOrder = orderRepository.save(newOrder);
+            Order savedOrder = orderRepository.save(order);
 
             for (Preparation preparation : order.getPreparationList()) {
                 Preparation newPreparation = new Preparation();
