@@ -13,6 +13,7 @@ services:
       MARIADB_USER: order
       MARIADB_PASSWORD: order
       MARIADB_DATABASE: scavolini-order
+      TZ: Europe/Rome
     restart: unless-stopped
     volumes:
       - type: volume
