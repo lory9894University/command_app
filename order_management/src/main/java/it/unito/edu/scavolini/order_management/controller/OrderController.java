@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -50,24 +51,21 @@ public class OrderController {
         return ResponseEntity.ok(orderToRemove);
     }
 
+    /**
+     * Creates an Order, saves in DB and if it is done at restaurant is immediately sent to kitchen
+     * otherwise it is just saved and it will be checked and sent in the right time
+     * by the checkOrdersToSend scheduled method
+     * */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
 
-        Order newOrder = new Order();
-        newOrder.setTableNum(order.getTableNum());
-        newOrder.setPaymentType(order.getPaymentType());
-        newOrder.setPaymentState(order.getPaymentState());
-        newOrder.setTotal(order.getTotal());
-        newOrder.setOrderType(order.getOrderType());
-        newOrder.setOrderState(order.getOrderState());
-
         if (order.getDateTime() == null) {
-            newOrder.setDateTime(LocalDateTime.now());
+            order.setDateTime(LocalDateTime.now());
         } else {
-            newOrder.setDateTime(order.getDateTime());
+            order.setDateTime(order.getDateTime());
         }
 
-        Order savedOrder = orderRepository.save(newOrder);
+        Order savedOrder = orderRepository.save(order);
 
         // sending single preparations of the order to the kitchen
         for (Preparation preparation : order.getPreparationList()) {
@@ -111,33 +109,36 @@ public class OrderController {
     }
 
     /**
-     * Scheduled method that checks every 10 seconds if there are new orders to send to the kitchen
+     * Scheduled method that checks every 10 seconds if there are new orders to be sent to the kitchen
      * An order is sent to the kitchen if the delivery time chosen by the user is less than 1 hour
+     * and it's a delivery/preorder/takeaway order. In restaurant orders are immediately managed during creation.
      * */
     @Scheduled(fixedDelay = 10000)
     @Async
     public void checkOrdersToSend() {
-        System.out.println("[scheduled] Checking orders to send to the kitchen...");
-//        List<Order> orders = orderRepository.findAll();
-//        for (Order order : orders) {
-//            // check if order is a preorder
-//            if (order.getOrderType() == OrderTypeEnum.PREORDER && order.getReservation().getDateTime().isBefore(LocalDateTime.now().plusHours(1))
-//                || ((order.getOrderType() == OrderTypeEnum.DELIVERY || order.getOrderType() == OrderTypeEnum.TAKEAWAY)
-//                    && order.getDateTime().isBefore(LocalDateTime.now().plusHours(1)))
-//            ) {
-//                if (order.getOrderState() == OrderStateEnum.ACCEPTED) { // TODO: maybe check acceptance from reservation?
-//                    for (Preparation preparation : order.getPreparationList()) {
-//                        rabbitMqSender.send(preparation);
-//                    }
-//                }
-//            }
-//        }
-        List<Order> ordersToPrepare = orderRepository.findOrdersToPrepare();
+        System.out.println("[SCHEDULE] Checking preparations to send to the kitchen...");
+//        List<Preparation> preparationsToPrepare = preparationRepository.findPreparationsToPrepare();
+//        List<Order> ordersToPrepare = orderRepository.findOrdersToPrepare();
+
+        List<Order> ordersToPrepare = getOrdersToPrepare();
+
         for (Order order : ordersToPrepare) {
             for (Preparation preparation : order.getPreparationList()) {
+                System.out.println("[SCHEDULE] Sending preparation\n" + preparation);
                 rabbitMqSender.send(preparation);
             }
         }
+    }
+
+    private List<Order> getOrdersToPrepare() {
+        List<Order> ordersToPrepare = new ArrayList<>();
+        ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.DELIVERY, LocalDateTime.now().plusHours(1)));
+        ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.TAKEAWAY, LocalDateTime.now().plusHours(1)));
+        ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.PREORDER, LocalDateTime.now().plusHours(1)));
+        return ordersToPrepare;
     }
 
 
