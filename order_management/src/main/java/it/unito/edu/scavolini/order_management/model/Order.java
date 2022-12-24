@@ -1,6 +1,7 @@
 package it.unito.edu.scavolini.order_management.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.unito.edu.scavolini.order_management.enums.OrderStateEnum;
 import it.unito.edu.scavolini.order_management.enums.OrderTypeEnum;
 import it.unito.edu.scavolini.order_management.enums.PaymentStateEnum;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -48,12 +49,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStateEnum orderState;
 
-    @Transient
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
+    @JsonManagedReference
     private List<Preparation> preparationList;
-
-//    @OneToOne(mappedBy = "order")
-//    private Reservation reservation;
 
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);

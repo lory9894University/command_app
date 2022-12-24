@@ -1,5 +1,6 @@
 package it.unito.edu.scavolini.order_management.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.unito.edu.scavolini.order_management.enums.PreparationStatesEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "preparation")
+@Table(name = "preparations")
 public class Preparation {
 
     @Id
@@ -27,13 +28,14 @@ public class Preparation {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
 
     public String toString() {
         return "Preparation [" +
             "\n\t\tid=" + id +
             "\n\t\tname=" + name +
-            "\n\t\ttable=" + tableNum +
+            "\n\t\ttableNum=" + tableNum +
             "\n\t\tstate=" + state + "]";
     }
 }
