@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/kitchen")
+@RequestMapping("/order")
 public class OrderController {
 
     @Autowired
@@ -43,14 +43,14 @@ public class OrderController {
     @Value("${kitchen_microservice_url}")
     private String kitchen_microservice_url;
 
-    @GetMapping("/order/remove/{id}")
+    @GetMapping("/remove/{id}")
     public ResponseEntity<Order> removeOrderById(@RequestParam("id") Long id) {
         Order orderToRemove = orderRepository.findDistinctFirstById(id);
         orderRepository.delete(orderToRemove);
         return ResponseEntity.ok(orderToRemove);
     }
 
-    @PostMapping(value = "/order/create", consumes = "application/json")
+    @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
 
         Order newOrder = new Order();
@@ -60,10 +60,6 @@ public class OrderController {
         newOrder.setTotal(order.getTotal());
         newOrder.setOrderType(order.getOrderType());
         newOrder.setOrderState(order.getOrderState());
-
-//        if (order.getReservation() != null) {
-//            newOrder.setReservation(order.getReservation());
-//        }
 
         if (order.getDateTime() == null) {
             newOrder.setDateTime(LocalDateTime.now());
