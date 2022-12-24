@@ -33,23 +33,27 @@ public class Order {
     private LocalDateTime dateTime;
 
     @Column(name = "payment_state")
+    @Enumerated(EnumType.STRING)
     private PaymentStateEnum paymentState;
 
     @Column(name = "payment_type")
+    @Enumerated(EnumType.STRING)
     private PaymentTypeEnum paymentType;
 
     @Column(name = "order_type")
+    @Enumerated(EnumType.STRING)
     private OrderTypeEnum orderType;
 
     @Column(name = "state")
+    @Enumerated(EnumType.STRING)
     private OrderStateEnum orderState;
 
     @Transient
     @OneToMany(mappedBy = "order")
     private List<Preparation> preparationList;
 
-    @OneToOne(mappedBy = "order")
-    private Reservation reservation;
+//    @OneToOne(mappedBy = "order")
+//    private Reservation reservation;
 
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);

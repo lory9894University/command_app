@@ -22,6 +22,7 @@ public class Preparation {
     private String tableNum;
 
     @Column(name = "state")
+    @Enumerated(EnumType.STRING)
     private PreparationStatesEnum state;
 
     @ManyToOne
