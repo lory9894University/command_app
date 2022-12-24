@@ -93,9 +93,9 @@ public class RabbitMqReceiver {
             newOrder.setOrderType(order.getOrderType());
             newOrder.setOrderState(order.getOrderState());
 
-            if (order.getReservation() != null) { // TODO NOTE: in this case there MUST be a reservation
-                newOrder.setReservation(order.getReservation());
-            }
+//            if (order.getReservation() != null) {
+//                newOrder.setReservation(order.getReservation());
+//            }
 
             if (order.getDateTime() == null) {
                 newOrder.setDateTime(LocalDateTime.now());

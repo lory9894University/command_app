@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
+@Table(name = "reservation")
 public class Reservation {
 
     @Id
@@ -22,7 +22,7 @@ public class Reservation {
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
-    @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private Order order;
+//    @OneToOne
+//    @JoinColumn(name = "order_id", referencedColumnName = "id")
+//    private Order order;
 }
