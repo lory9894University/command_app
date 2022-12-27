@@ -55,6 +55,7 @@ jobs:
         run: docker compose down
 
       - name: Compose order management
+        working-directory: /home/pi/actions-runner/_work/command_app/command_app/
         run: docker compose up --build -d
 
 
