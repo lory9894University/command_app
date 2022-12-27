@@ -3,6 +3,7 @@ package com.unito.edu.scavolini.kitchen.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * This class is used to receive a message from the queue on rabbitmq,it simply subscribes to the kitchen queue and .... TODO
  */
 @Component
+@EnableRabbit
 public class RabbitMqReceiver {
 
     //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
