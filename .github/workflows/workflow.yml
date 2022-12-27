@@ -7,7 +7,7 @@ on:
     branches: [ order_management ]
 
 jobs:
-  build:
+  build-order-management:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,3 +19,17 @@ jobs:
           distribution: 'corretto'
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package -f /home/runner/work/command_app/command_app/order_management/pom.xml
+
+  build-kitchen:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package -f /home/runner/work/command_app/command_app/kitchen/pom.xml
+    
