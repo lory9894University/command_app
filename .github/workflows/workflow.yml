@@ -45,17 +45,17 @@ jobs:
 
         
 # Job to compose all
-  compose:
-    runs-on: self-hosted
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Compose down
-        run: docker compose down
-      
-      - name: Compose order management
-        run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/docker-compose.yml up --build -d 
+#  compose:
+#    runs-on: self-hosted
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Compose down
+#        run: docker compose down
+#
+#      - name: Compose order management
+#        run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/docker-compose.yml up --build -d
 
       
     
