@@ -2,7 +2,8 @@ name: comand_app_ci_cd
 
 on:
   push:
-    branches: [ order_management ]
+    branches:
+      - development
 
 jobs:
 # Step to check build of each microservice
@@ -29,7 +30,21 @@ jobs:
 #         run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/kitchen/pom.xml
         
         
-# Job to compose
+# Job to compose single microservice
+#   compose:
+#     runs-on: self-hosted
+
+#     steps:
+#       - uses: actions/checkout@v3
+      
+#       - name: Compose down
+#         run: docker compose down
+      
+#       - name: Compose order management
+#         run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml up --build -d
+
+        
+# Job to compose all
   compose:
     runs-on: self-hosted
 
@@ -40,7 +55,7 @@ jobs:
         run: docker compose down
       
       - name: Compose order management
-        run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml up --build -d 
+        run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/docker-compose.yml up --build -d 
 
       
     
