@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+/api_gateway/mvnw
+/api_gateway/mvnw.cmd
+/api_gateway/target/
+/api_gateway/.idea/
+/api_gateway/.mvn/
