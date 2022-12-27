@@ -5,7 +5,7 @@ on:
     branches: [ order_management ]
 
 jobs:
-  build:
+  set-up-maven:
     runs-on: self-hosted
     steps:
       - name: Set up Maven
@@ -13,7 +13,9 @@ jobs:
         with:
           maven-version: 4.0.0
 
-      - name: checkout
+  build:
+    runs-on: self-hosted
+    steps:
       - uses: actions/checkout@v3
       
       - name: Set up JDK 17
