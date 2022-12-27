@@ -75,8 +75,6 @@ public class RestController {
         }
 
         preparation.setState(PreparationStatesEnum.READY);
-        kitchenRepository.save(preparation);
-
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -90,12 +88,13 @@ public class RestController {
             restTemplate.postForEntity("http://" + waiter_url + "/preparations/create", request, String.class);
             System.out.println(" [x] Sent '" + preparationJsonObject + "'");
             response =  ResponseEntity.ok(preparation);
-
-
+            //preparation is ready and sent, remove it from the database
+            kitchenRepository.delete(preparation);
         }catch (Exception e){
             e.printStackTrace();
             response = ResponseEntity.internalServerError().build();
         }
+
 
         return response;
     }
