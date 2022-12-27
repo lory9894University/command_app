@@ -41,8 +41,8 @@ public class RestController {
     }
 
 
-    @Value("${api_gateway}")
-    private String api_gateway;
+    @Value("${waiter_url}")
+    private String waiter_url;
 
     @PutMapping("/preparations/state/waiting/{id}")
     public ResponseEntity<Preparation> setStateWaiting(@PathVariable int id){
@@ -55,7 +55,7 @@ public class RestController {
         return ResponseEntity.ok(preparation);
     }
 
-    @PutMapping("/preparations/state/uderway/{id}")
+    @PutMapping("/preparations/state/underway/{id}")
     public ResponseEntity<Preparation> setStateUnderway(@PathVariable int id){
         Preparation preparation = kitchenRepository.findDistinctFirstById(id);
         if (preparation == null){
@@ -84,9 +84,10 @@ public class RestController {
         JSONObject preparationJsonObject = new JSONObject();
         preparationJsonObject.put("name", preparation.getName());
         preparationJsonObject.put("table", preparation.getTable());
+        System.out.println(" [x] Sent '" + preparationJsonObject + "'");
         try{
             HttpEntity<String> request = new HttpEntity<>(preparationJsonObject.toString(), headers);
-            restTemplate.postForEntity("http://" + api_gateway + "waiter/preparations/create", request, String.class);
+            restTemplate.postForEntity("http://" + waiter_url + "/preparations/create", request, String.class);
             System.out.println(" [x] Sent '" + preparationJsonObject + "'");
             response =  ResponseEntity.ok(preparation);
 

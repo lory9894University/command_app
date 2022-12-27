@@ -17,8 +17,8 @@ public class WaiterController {
 
     @Autowired
     private WaiterRepository waiterRepository;
-    @Value("${api_gateway}")
-    private String api_gateway;
+    @Value("${kitchen_url}")
+    private String kitchen_url;
 
     @GetMapping("/preparations")
     public List<Preparation> getAllPreparations() {
@@ -36,7 +36,7 @@ public class WaiterController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             // Send the deletion request to kitchen as DELETE
-             restTemplate.delete("http://" + api_gateway + "/preparations/removeByTableAndName?table=" + preparationToChange.getTable() + "&name=" + preparationToChange.getName());
+             restTemplate.delete("http://" + kitchen_url + "/preparations/removeByTableAndName?table=" + preparationToChange.getTable() + "&name=" + preparationToChange.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,9 +48,10 @@ public class WaiterController {
     }
 
 
-    @PostMapping(value = "/preparations/create")
+    @PostMapping(value = "/preparations/create", consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 
+        System.out.println(preparation);
         return waiterRepository.save(new Preparation(preparation.getName(), preparation.getTable()));
     }
 
