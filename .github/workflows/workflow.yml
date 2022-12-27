@@ -40,7 +40,7 @@ jobs:
         run: docker compose down
       
       - name: Compose order management
-        run: docker compose up --build -d -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml
+        run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml up --build -d 
 
       
     
