@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/waiter")
+@RequestMapping("/")
 public class WaiterController {
 
     DeliveredPreparationSender deliveredPreparationSender = new DeliveredPreparationSender();
@@ -24,8 +24,8 @@ public class WaiterController {
 
     @Autowired
     private WaiterRepository waiterRepository;
-    @Value("${kitchen_microservice_url}")
-    private String waiter_microservice_url;
+    @Value("${api_gateway}")
+    private String api_gateway;
 
     @GetMapping("/preparations")
     public List<Preparation> getAllPreparations() {
@@ -52,7 +52,7 @@ public class WaiterController {
 
             //send it via post request to the waiter microservice
             RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI("http://" + waiter_microservice_url + "/kitchen/preparation/remove");
+            URI uri = new URI("http://" + api_gateway + "/kitchen/preparation/remove");
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<String>(jsonPreparation, headers);
