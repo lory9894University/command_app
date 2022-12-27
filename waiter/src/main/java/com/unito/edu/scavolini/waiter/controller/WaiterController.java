@@ -2,25 +2,18 @@ package com.unito.edu.scavolini.waiter.controller;
 
 import com.unito.edu.scavolini.waiter.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.waiter.model.Preparation;
-import com.unito.edu.scavolini.waiter.rabbitMq.DeliveredPreparationSender;
 import com.unito.edu.scavolini.waiter.repository.WaiterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
 public class WaiterController {
-
-    DeliveredPreparationSender deliveredPreparationSender = new DeliveredPreparationSender();
-
 
     @Autowired
     private WaiterRepository waiterRepository;
@@ -33,45 +26,29 @@ public class WaiterController {
         return waiterRepository.findAll();
     }
 
-    @PostMapping("/preparation/changeState")
-    public Preparation changeState(@RequestBody Preparation preparation) {
-        Preparation preparationToChange = waiterRepository.findDistinctFirstById(preparation.getId());
-        preparationToChange.setState(preparation.getState());
-        waiterRepository.delete(preparationToChange);
+    @PutMapping("/preparations/state/delivered/{id}")
+    public ResponseEntity<Preparation> setDelivered(@PathVariable int id) {
+        Preparation preparationToChange = waiterRepository.findDistinctFirstById(id);
+        if (preparationToChange == null) {
+            return ResponseEntity.notFound().build();
+        }
 
+        RestTemplate restTemplate = new RestTemplate();
         try {
-            //convert the preparation in JSON format
-            //TODO: VAFFANCULO, IL JSON PARSATO A MANO È UNA MERDA, daltro canto bisogrebbe passare a jacson la preparazione senza state e non so farlo
-            String jsonPreparation = "{" +
-                    "\"name\":\"" + preparationToChange.getName() + "\"," +
-                    "\"table\":\"" + preparationToChange.getTable() + "\"" +
-                    "}";
-
-
-            System.out.println(" [x] Sending '" + jsonPreparation + "'");
-
-            //send it via post request to the waiter microservice
-            RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI("http://" + api_gateway + "/kitchen/preparation/remove");
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> request = new HttpEntity<String>(jsonPreparation, headers);
-            restTemplate.postForEntity(uri, request, String.class);
+            // Send the deletion request to kitchen as DELETE
+             restTemplate.delete("http://" + api_gateway + "/preparations/removeByTableAndName?table=" + preparationToChange.getTable() + "&name=" + preparationToChange.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-         if (preparationToChange.getState() == PreparationStatesEnum.DELIVERED){
-            // if preparation gets state delivered send message to queue
-            deliveredPreparationSender.send(preparationToChange);
-        }
+        preparationToChange.setState(PreparationStatesEnum.DELIVERED);
+        waiterRepository.delete(preparationToChange);
 
-        return preparationToChange;
+        return ResponseEntity.ok(preparationToChange);
     }
 
 
-
-    @PostMapping(value = "/preparation/create")
+    @PostMapping(value = "/preparations/create")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 
         return waiterRepository.save(new Preparation(preparation.getName(), preparation.getTable()));
