@@ -15,10 +15,10 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
       - name: Build order management
-        run: mvn --batch-mode --update-snapshots package
+        run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/order_management/pom.xml
 
       - name: Build kitchen
-        run: mvn --batch-mode --update-snapshots package
+        run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/kitchen/pom.xml
     
 #   compose:
 #     runs-on: ubuntu-latest
