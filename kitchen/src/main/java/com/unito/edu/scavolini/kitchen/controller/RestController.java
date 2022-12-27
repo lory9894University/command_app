@@ -87,7 +87,7 @@ public class RestController {
         preparationJsonObject.put("table", preparation.getTable());
         try{
             HttpEntity<String> request = new HttpEntity<>(preparationJsonObject.toString(), headers);
-            restTemplate.postForEntity("http://" + api_gateway + "/preparation/create", request, String.class);
+            restTemplate.postForEntity("http://" + api_gateway + "waiter/preparations/create", request, String.class);
             System.out.println(" [x] Sent '" + preparationJsonObject + "'");
             response =  ResponseEntity.ok(preparation);
 
@@ -106,6 +106,12 @@ public class RestController {
     @DeleteMapping("/preparations/remove/{id}")
     public void removePreparation(@PathVariable int id) {
         Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(id);
+        kitchenRepository.delete(preparationToRemove);
+    }
+
+    @DeleteMapping("/preparations/removeByTableAndName")
+    public void removePreparation(@RequestParam(value = "table") String table, @RequestParam(value = "name") String name) {
+        Preparation preparationToRemove = kitchenRepository.findDistinctFirstByNameAndTableNum(name, table);
         kitchenRepository.delete(preparationToRemove);
     }
 
