@@ -5,44 +5,42 @@ on:
     branches: [ order_management ]
 
 jobs:
-
-
-
-  build:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.8.1
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'corretto'
-          
-      - name: Build order management
-        run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/order_management/pom.xml
-
-      - name: Build kitchen
-        run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/kitchen/pom.xml
-        
-        
-    
-#   compose:
+# Step to check build of each microservice
+#   build:
 #     runs-on: self-hosted
-
 #     steps:
 #       - uses: actions/checkout@v3
+
+#       - name: Set up Maven
+#         uses: stCarolas/setup-maven@v4.5
+#         with:
+#           maven-version: 3.8.1
       
-#       - name: Compose order management
-#         run: docker compose up --build -d
+#       - name: Set up JDK 17
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: '17'
+#           distribution: 'corretto'
+          
+#       - name: Build order management
+#         run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/order_management/pom.xml
+
+#       - name: Build kitchen
+#         run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/kitchen/pom.xml
         
-#       - name: Compose kitchen
-#         run: docker compose up --build -d
+        
+# Job to compose
+  compose:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Compose down
+        run: docker compose down
+      
+      - name: Compose order management
+        run: docker compose up --build -d -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml
 
       
     
