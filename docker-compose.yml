@@ -110,6 +110,7 @@ networks:
     scavolini-network:
     scavolini-kitchen-internal:
     scavolini-waiter-internal:
+    frontend-network:
 
 volumes:
     data-db-kitchen:
