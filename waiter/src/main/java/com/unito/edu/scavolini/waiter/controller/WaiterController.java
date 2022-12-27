@@ -33,14 +33,6 @@ public class WaiterController {
             return ResponseEntity.notFound().build();
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            // Send the deletion request to kitchen as DELETE
-             restTemplate.delete("http://" + kitchen_url + "/preparations/removeByTableAndName?table=" + preparationToChange.getTable() + "&name=" + preparationToChange.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         preparationToChange.setState(PreparationStatesEnum.DELIVERED);
         waiterRepository.delete(preparationToChange);
 
