@@ -8,7 +8,6 @@ import it.unito.edu.scavolini.order_management.model.Preparation;
 import it.unito.edu.scavolini.order_management.repository.OrderRepository;
 import it.unito.edu.scavolini.order_management.repository.PreparationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,13 +37,7 @@ public class OrderController {
         return orderRepository.findAll();
     }
 
-    @Value("${waiter_microservice_url}")
-    private String waiter_microservice_url;
-
-    @Value("${kitchen_microservice_url}")
-    private String kitchen_microservice_url;
-
-    @GetMapping("/remove/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<Order> removeOrderById(@RequestParam("id") Long id) {
         Order orderToRemove = orderRepository.findDistinctFirstById(id);
         orderRepository.delete(orderToRemove);
@@ -86,7 +79,12 @@ public class OrderController {
         return ResponseEntity.ok(savedOrder);
     }
 
-    @GetMapping("/order/accept/{id}")
+    /**
+     * Method used to mark and order (delivery or take away) accepted and eligible to be sent to the kitchen
+     * NOTE: Preorder orders should not be accepted here
+     *      but in Reservation microservice since are related to a reservation
+     * */
+    @PutMapping("/order/accept/{id}")
     public ResponseEntity<Order> acceptOrder(@PathVariable(value = "id") Long orderId) {
         Order order = orderRepository.findDistinctFirstById(orderId);
         if (order == null) {
@@ -97,7 +95,11 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    @GetMapping("/order/reject/{id}")
+
+    /**
+     * Method used to mark and order (delivery or take away) rejected and not eligible to be sent to the kitchen
+     * */
+    @PutMapping("/order/reject/{id}")
     public ResponseEntity<Order> rejectOrder(@PathVariable(value = "id") Long orderId) {
         Order order = orderRepository.findDistinctFirstById(orderId);
         if (order == null) {
@@ -116,9 +118,7 @@ public class OrderController {
     @Scheduled(fixedDelay = 10000)
     @Async
     public void checkOrdersToSend() {
-        System.out.println("[SCHEDULE] Checking preparations to send to the kitchen...");
-//        List<Preparation> preparationsToPrepare = preparationRepository.findPreparationsToPrepare();
-//        List<Order> ordersToPrepare = orderRepository.findOrdersToPrepare();
+        System.out.println("\n\n[SCHEDULE] Checking preparations to send to the kitchen...");
 
         List<Order> ordersToPrepare = getOrdersToPrepare();
 
@@ -130,6 +130,11 @@ public class OrderController {
         }
     }
 
+    /**
+     * Method used to query and get all the orders (except IN_RESTAURANT orders, managed immediately)
+     * that are eligible to be sent to the kitchen.
+     * It is executed periodically by the checkOrdersToSend scheduled method.
+     * */
     private List<Order> getOrdersToPrepare() {
         List<Order> ordersToPrepare = new ArrayList<>();
         ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
