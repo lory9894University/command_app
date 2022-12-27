@@ -4,7 +4,7 @@ content-type: application/json
 
 {
   "name": "pizza di Petrone",
-  "tableNum": 1
+  "table": 1
 }
 
 ### Get all preparations
@@ -21,4 +21,16 @@ content-type: application/json
 }
 
 ### Get all preparations
-GET http://localhost:8081/waiter/preparations
+GET http://localhost:8080/waiter/preparations
+
+### create new prep on waiter side
+POST http://localhost:8080/waiter/preparation/create
+content-type: application/json
+
+{
+  "name": "pizza di Petrone",
+  "table": 1
+}
+
+
+
