@@ -4,7 +4,7 @@ services:
     container_name: mariadb_waiter
     image: "mariadb"
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - scavolini-network
       - scavolini-waiter-internal
