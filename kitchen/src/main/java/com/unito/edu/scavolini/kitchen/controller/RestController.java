@@ -6,14 +6,18 @@ import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.net.URI;
 import java.util.List;
 
+
 @org.springframework.web.bind.annotation.RestController
-@RequestMapping("/kitchen")
+@RequestMapping("/")
 public class RestController {
 
     //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
@@ -21,16 +25,6 @@ public class RestController {
 
     @Autowired
     private KitchenRepository kitchenRepository;
-
-    @Autowired
-    private RabbitMqSender rabbitMqSender;
-
-    //TODO: test class for rabbitmq, remove
-    @GetMapping("/test")
-    public void test() {
-        rabbitMqSender.send(new Preparation("test", "T2"));
-
-    }
 
     @GetMapping("/preparations")
     public List<Preparation> getAllPreparations(){
@@ -42,8 +36,24 @@ public class RestController {
     /***
      * Get a preparation and changes its state accordingly. If the state is changed to "READY" the preparation is sent to RabbitMQ
      */
-    @Value("${waiter_microservice_url}")
-    private String waiter_microservice_url;
+    @Value("${api_gateway}")
+    private String api_gateway;
+
+    @GetMapping("/preparation/state/waiting/{id}")
+    public Preparation setStateWaiting(@PathVariable int id){
+        Preparation preparation = kitchenRepository.findDistinctFirstById(id);
+        preparation.setState(PreparationStatesEnum.WAITING);
+        kitchenRepository.save(preparation);
+        return preparation;
+    }
+
+    @GetMapping("/preparation/state/uderway/{id}")
+    public Preparation setStateUnderway(@PathVariable int id){
+        Preparation preparation = kitchenRepository.findDistinctFirstById(id);
+        preparation.setState(PreparationStatesEnum.UNDERWAY);
+        kitchenRepository.save(preparation);
+        return preparation;
+    }
 
     @PostMapping("/preparation/changeState")
     public Preparation changeState(@RequestBody Preparation preparation) {
@@ -54,12 +64,22 @@ public class RestController {
             String jsonPreparation = null;
         try {
             //convert the preparation in JSON format
-            jsonPreparation = objectMapper.writeValueAsString(preparation);
+            //TODO: VAFFANCULO, IL JSON PARSATO A MANO È UNA MERDA, daltro canto bisogrebbe passare a jacson la preparazione senza state e non so farlo
+            jsonPreparation = "{\n" +
+                    "  \"name\": \"" + preparationToChange.getName() + "\",\n" +
+                    "  \"table\": " + preparationToChange.getTable() +
+                    "\n}";
+
+
+            System.out.println(" [x] Sending '" + jsonPreparation + "'");
+
             //send it via post request to the waiter microservice
             RestTemplate restTemplate = new RestTemplate();
-            URI uri = new URI("http://"+waiter_microservice_url+"/api/preparation/create");
-            restTemplate.postForEntity(uri, jsonPreparation, String.class);
-            System.out.println(" [x] Sent '" + preparation + "'");
+            URI uri = new URI("http://"+ api_gateway + "/waiter/preparation/create");
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            HttpEntity<String> request = new HttpEntity<String>(jsonPreparation, headers);
+            restTemplate.postForEntity(uri, request, String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,7 +95,7 @@ public class RestController {
      */
     @PostMapping("/preparation/remove")
     public void removePreparation(@RequestBody Preparation preparation) {
-        Preparation preparationToRemove = kitchenRepository.findDistinctFirstById(preparation.getId());
+        Preparation preparationToRemove = kitchenRepository.findDistinctFirstByNameAndTableNum(preparation.getName(), preparation.getTable());
         kitchenRepository.delete(preparationToRemove);
     }
 

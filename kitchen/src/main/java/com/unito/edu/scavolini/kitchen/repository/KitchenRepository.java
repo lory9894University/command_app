@@ -10,4 +10,6 @@ public interface KitchenRepository extends CrudRepository<Preparation, Long> {
     List<Preparation> findAll();
 
     Preparation findDistinctFirstById(int id);
+
+    Preparation findDistinctFirstByNameAndTableNum(String name, String table);
 }
