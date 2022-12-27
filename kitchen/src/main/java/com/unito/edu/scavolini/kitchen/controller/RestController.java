@@ -1,6 +1,5 @@
 package com.unito.edu.scavolini.kitchen.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.kitchen.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.kitchen.model.Preparation;
 import com.unito.edu.scavolini.kitchen.repository.KitchenRepository;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.*;
 
-import java.net.URI;
 import java.util.List;
 
 
@@ -22,17 +20,13 @@ import java.util.List;
 @RequestMapping("/")
 public class RestController {
 
-    //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
-    ObjectMapper objectMapper = new ObjectMapper();
-
     @Autowired
     private KitchenRepository kitchenRepository;
 
     @GetMapping("/preparations")
     public List<Preparation> getAllPreparations(){
-        List<Preparation> preparationList = kitchenRepository.findAll();
 
-        return preparationList;
+        return kitchenRepository.findAll();
     }
 
     /**
@@ -75,10 +69,10 @@ public class RestController {
 
     @PutMapping("/preparations/state/ready/{id}")
     public ResponseEntity<Preparation> setStateReady(@PathVariable int id){
-        ResponseEntity<Preparation> response = null;
+        ResponseEntity<Preparation> response;
         Preparation preparation = kitchenRepository.findDistinctFirstById(id);
         if (preparation == null){
-            response =  ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build();
         }
 
         preparation.setState(PreparationStatesEnum.READY);
@@ -93,7 +87,7 @@ public class RestController {
         preparationJsonObject.put("table", preparation.getTable());
         try{
             HttpEntity<String> request = new HttpEntity<>(preparationJsonObject.toString(), headers);
-            restTemplate.postForEntity("http://" + api_gateway + "/waiter/preparation/create", request, String.class);
+            restTemplate.postForEntity("http://" + api_gateway + "/preparation/create", request, String.class);
             System.out.println(" [x] Sent '" + preparationJsonObject + "'");
             response =  ResponseEntity.ok(preparation);
 
