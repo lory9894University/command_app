@@ -1,4 +1,4 @@
-name: Java CI
+name: comand_app_ci_cd
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -16,8 +15,22 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
       - name: Build order management
-        run: mvn --batch-mode --update-snapshots package -f /home/runner/work/command_app/command_app/order_management/pom.xml
+        run: mvn --batch-mode --update-snapshots package
 
       - name: Build kitchen
-        run: mvn --batch-mode --update-snapshots package -f /home/runner/work/command_app/command_app/kitchen/pom.xml
+        run: mvn --batch-mode --update-snapshots package
+    
+#   compose:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v3
+      
+#       - name: Compose order management
+#         run: docker compose up --build -d
+        
+#       - name: Compose kitchen
+#         run: docker compose up --build -d
+
+      
     
