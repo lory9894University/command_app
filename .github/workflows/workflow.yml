@@ -39,7 +39,7 @@
          with:
            context: /home/runner/work/command_app/command_app/order_management/
            push: true
-           platforms: linux/arm64/v7
+           platforms: linux/arm64/v8
            tags: ${{ steps.meta.outputs.tags }}
            labels: ${{ steps.meta.outputs.labels }}
 
