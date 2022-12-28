@@ -39,8 +39,8 @@
          with:
            context: /home/runner/work/command_app/command_app/order_management/
            push: true
-           tags: ${{ steps.meta.outputs.tags }}
            platforms: linux/arm/v7
+           tags: ${{ steps.meta.outputs.tags }}
            labels: ${{ steps.meta.outputs.labels }}
 
    compose_raspi:
@@ -56,6 +56,8 @@
            password: JQs!LtB4tdRZxNQ
 
        - name: Compose down
+         with:
+          context: /home/pi/compose_test/
          run: docker compose down
 
        - name: Compose order management
