@@ -8,8 +8,8 @@
  jobs:
 
  # Job to build docker images
-   push_to_registry:
-     name: Push Docker image to Docker Hub
+   build_and_push_to_docker_hub:
+     name: Build and push Docker image to Docker Hub
      runs-on: ubuntu-latest
 
      steps:
@@ -44,6 +44,8 @@
            labels: ${{ steps.meta.outputs.labels }}
 
    compose_raspi:
+     name: Execute docker compose on raspberry
+     needs: build_and_push_to_docker_hub
      runs-on: self-hosted
 
      steps:
@@ -55,6 +57,9 @@
            username: scavolini
            password: JQs!LtB4tdRZxNQ
 
+       - name: remove old image
+         run: docker rmi scavolini/comand_app:order_management
+        
        - name: Compose down
          run: docker compose down
 
