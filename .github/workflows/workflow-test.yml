@@ -45,7 +45,7 @@
 
    compose_raspi:
      name: Execute docker compose on raspberry
-#      needs: build_and_push_to_docker_hub
+     needs: build_and_push_to_docker_hub
      runs-on: self-hosted
 
      steps:
