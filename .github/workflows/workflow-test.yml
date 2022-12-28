@@ -66,7 +66,7 @@
 
    compose_raspi:
      name: Execute docker compose on raspberry
-#      needs: [build_and_push_waiter, build_and_push_order_management]
+     needs: [build_and_push_waiter, build_and_push_order_management]
      runs-on: self-hosted
 
      steps:
