@@ -1,4 +1,4 @@
-FROM maven:3-amazoncorretto-17 AS build
+FROM maven:3.8.3-amazoncorretto-17 AS build
 RUN mkdir -p /workspace
 WORKDIR /workspace
 COPY pom.xml /workspace
