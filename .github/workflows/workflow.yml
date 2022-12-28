@@ -6,56 +6,117 @@ on:
       - development
 
 jobs:
-  # Step to check build of each microservice
-  #   build:
-  #     runs-on: self-hosted
-  #     steps:
-  #       - uses: actions/checkout@v3
 
-  #       - name: Set up Maven
-  #         uses: stCarolas/setup-maven@v4.5
-  #         with:
-  #           maven-version: 3.8.1
+  # Jobs to build docker images, one for each microservice (image), so they can execute in parallel
 
-  #       - name: Set up JDK 17
-  #         uses: actions/setup-java@v3
-  #         with:
-  #           java-version: '17'
-  #           distribution: 'corretto'
+  #Job to build the image for the waiter microservice
+  build_and_push_waiter:
+    name: Build and push waiter image to Docker Hub
+    runs-on: ubuntu-latest
 
-  #       - name: Build order management
-  #         run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/order_management/pom.xml
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
-  #       - name: Build kitchen
-  #         run: mvn --batch-mode --update-snapshots package -f /home/pi/actions-runner/_work/command_app/command_app/kitchen/pom.xml
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-  # Job to compose single microservice
-  #   compose:
-  #     runs-on: self-hosted
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: scavolini #TODO should be a secret in repository settings
+          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
 
-  #     steps:
-  #       - uses: actions/checkout@v3
+      - name: Build and push kitchen
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/waiter/
+          push: true
+          platforms: linux/arm64/v8
+          tags: scavolini/comand_app:waiter
 
-  #       - name: Compose down
-  #         run: docker compose down
+  #Job to build the image for the order_management microservice
+  build_and_push_order_management:
+    name: Build and push order_management image to Docker Hub
+    runs-on: ubuntu-latest
 
-  #       - name: Compose order management
-  #         run: docker compose -f /home/pi/actions-runner/_work/command_app/command_app/order_management/docker-compose.yml up --build -d
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
 
-  # Job to compose all
-  compose:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: scavolini #TODO should be a secret in repository settings
+          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/order_management/
+          push: true
+          platforms: linux/arm64/v8
+          tags: scavolini/comand_app:order_management
+
+  #Job to build the image for the kitchen microservice
+  build_and_push_kitchen:
+    name: Build and push kitchen image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: scavolini #TODO should be a secret in repository settings
+          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/order_management/
+          push: true
+          platforms: linux/arm64/v8
+          tags: scavolini/comand_app:kitchen
+
+  #Job to pull images from Docker Hub and deploy on Raspberry
+  compose_raspi:
+    name: Execute docker compose on raspberry
+    needs: [build_and_push_waiter, build_and_push_order_management]
     runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Compose down
-        run: docker compose down
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: scavolini #TODO should be a secret in repository settings
+          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+
+      - name: Docker compose down and remove old images
+        # /home/pi/compose_test/ test directory, the directory written here should contain the docker-compose.yml file
+        working-directory: /home/pi/compose_test/
+        run: docker compose down --rmi local --volumes
 
       - name: Compose order management
-        working-directory: /home/pi/actions-runner/_work/command_app/command_app/
-        run: docker compose up --build -d
-
-
+        if: always()
+        # /home/pi/compose_test/ test directory, the directory written here should contain the docker-compose.yml file
+        run: docker compose -f /home/pi/compose_test/docker-compose.yml up --build -d
