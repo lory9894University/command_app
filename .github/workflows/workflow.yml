@@ -35,14 +35,13 @@
            images: scavolini/comand_app
 
        - name: Build and push Docker image
-#          uses: docker/build-push-action@v2
-#          with:
-#            context: /home/runner/work/command_app/command_app/order_management/
-#            push: true
-#            platforms: linux/arm/v7
-#            tags: ${{ steps.meta.outputs.tags }}
-#            labels: ${{ steps.meta.outputs.labels }}
-         run: docker buildx build --platform linux/arm64/v7 --tag scavolini/comand_app:buildx-latest --file /home/runner/work/command_app/command_app/order_management/Dockerfile --output type=image,push=true .
+         uses: docker/build-push-action@v2
+         with:
+           context: /home/runner/work/command_app/command_app/order_management/
+           push: true
+           platforms: linux/arm64/v7
+           tags: ${{ steps.meta.outputs.tags }}
+           labels: ${{ steps.meta.outputs.labels }}
 
    compose_raspi:
      runs-on: self-hosted
