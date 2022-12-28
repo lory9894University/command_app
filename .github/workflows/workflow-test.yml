@@ -1,4 +1,4 @@
- name: comand_app_ci_cd
+ name: comand_app_ci_cd_test
 
  on:
    push:
