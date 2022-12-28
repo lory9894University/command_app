@@ -57,13 +57,13 @@
            username: scavolini
            password: JQs!LtB4tdRZxNQ
 
-       - name: remove old image
-         run: docker rmi scavolini/comand_app:order_management
+#        - name: remove old image
+#          run: docker rmi scavolini/comand_app:order_management
         
        - name: Compose down
          if: always()
          working-directory: /home/pi/compose_test/
-         run: docker compose down --rmi
+         run: docker compose down --rmi local
 
        - name: Compose order management
          if: always()
