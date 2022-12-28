@@ -34,7 +34,7 @@
            context: /home/runner/work/command_app/command_app/waiter/
            push: true
            platforms: linux/arm64/v8
-           tags: waiter
+           tags: scavolini/comand_app:waiter
 
    build_and_push_order_management:
      name: Build and push Docker order_management image to Docker Hub
@@ -62,7 +62,7 @@
            context: /home/runner/work/command_app/command_app/order_management/
            push: true
            platforms: linux/arm64/v8
-           tags: order_management
+           tags: scavolini/comand_app:order_management
 
    compose_raspi:
      name: Execute docker compose on raspberry
