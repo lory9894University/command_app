@@ -99,7 +99,3 @@
        - name: Compose order management
          if: always()
          run: docker compose -f /home/pi/compose_test/docker-compose.yml up --build -d
-
-
-
-      
