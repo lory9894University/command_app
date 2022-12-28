@@ -1,11 +1,11 @@
-# name: comand_app_ci_cd
+ name: comand_app_ci_cd
 
-# on:
-#   push:
-#     branches:
-#       - order_management
+ on:
+   push:
+     branches:
+       - order_management
 
-# jobs:
+ jobs:
 
 # # Job to build docker images
 #   push_to_registry:
@@ -14,19 +14,19 @@
 #     steps:
 #       - name: Check out the repo
 #         uses: actions/checkout@v3
-      
+#
 #       - name: Log in to Docker Hub
 #         uses: docker/login-action@v2
 #         with:
 #           username: scavolini
 #           password: JQs!LtB4tdRZxNQ
-      
+#
 #       - name: Extract metadata (tags, labels) for Docker
 #         id: meta
 #         uses: docker/metadata-action@v2
 #         with:
 #           images: scavolini/comand_app
-      
+#
 #       - name: Build and push Docker image
 #         uses: docker/build-push-action@v2
 #         with:
@@ -34,16 +34,16 @@
 #           push: true
 #           tags: ${{ steps.meta.outputs.tags }}
 #           labels: ${{ steps.meta.outputs.labels }}
-    
+#
 #   compose_raspi:
 #     runs-on: self-hosted
-
+#
 #     steps:
 #       - uses: actions/checkout@v3
-
+#
 #       - name: Compose down
 #         run: docker compose down
-
+#
 #       - name: Compose order management
 #         run: docker compose -f /home/pi/compose_test/docker-compose.yml up --build -d
       
