@@ -42,7 +42,7 @@
 #            platforms: linux/arm/v7
 #            tags: ${{ steps.meta.outputs.tags }}
 #            labels: ${{ steps.meta.outputs.labels }}
-         run: docker buildx build --platform linux/arm64/v7 --tag scavolini/comand_app:buildx-latest --file /home/runner/work/command_app/command_app/order_management/Dockerfile --output type=image,push=true
+         run: docker buildx build --platform linux/arm64/v7 --tag scavolini/comand_app:buildx-latest --file /home/runner/work/command_app/command_app/order_management/Dockerfile --output type=image,push=true .
 
    compose_raspi:
      runs-on: self-hosted
