@@ -56,8 +56,6 @@
            password: JQs!LtB4tdRZxNQ
 
        - name: Compose down
-         with:
-          context: /home/pi/compose_test/
          run: docker compose down
 
        - name: Compose order management
