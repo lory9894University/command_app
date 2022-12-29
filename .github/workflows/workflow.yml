@@ -27,47 +27,18 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: scavolini #TODO should be a secret in repository settings
-          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+          username: ${{ secrets.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_PASSWORD }} 
 
-      - name: Build and push kitchen
+      - name: Build and push waiter
         uses: docker/build-push-action@v2
         with:
           context: /home/runner/work/command_app/command_app/waiter/
           push: true
           platforms: linux/arm64/v8
-          tags: scavolini/comand_app:waiter
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:waiter
 
-  #Job to build the image for the order_management microservice
-  build_and_push_order_management:
-    name: Build and push order_management image to Docker Hub
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-
-      - name: Set up QEMU dependency
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: scavolini #TODO should be a secret in repository settings
-          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: /home/runner/work/command_app/command_app/order_management/
-          push: true
-          platforms: linux/arm64/v8
-          tags: scavolini/comand_app:order_management
-
-  #Job to build the image for the kitchen microservice
+  #Job to build the image for the waiter microservice
   build_and_push_kitchen:
     name: Build and push kitchen image to Docker Hub
     runs-on: ubuntu-latest
@@ -85,21 +56,51 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: scavolini #TODO should be a secret in repository settings
-          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+          username: ${{ secrets.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push kitchen
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/kitchen/
+          push: true
+          platforms: linux/arm64/v8
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:kitchen
+
+  #Job to build the image for the api_gateway microservice
+  build_and_push_api_gateway:
+    name: Build and push api_gateway image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_PASSWORD }} 
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: /home/runner/work/command_app/command_app/order_management/
+          context: /home/runner/work/command_app/command_app/api_gateway/
           push: true
           platforms: linux/arm64/v8
-          tags: scavolini/comand_app:kitchen
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:api_gateway
+
 
   #Job to pull images from Docker Hub and deploy on Raspberry
   compose_raspi:
     name: Execute docker compose on raspberry
-    needs: [build_and_push_waiter, build_and_push_order_management]
+    needs: [build_and_push_waiter, build_and_push_kitchen, build_and_push_api_gateway]
     runs-on: self-hosted
 
     steps:
@@ -108,15 +109,12 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: scavolini #TODO should be a secret in repository settings
-          password: JQs!LtB4tdRZxNQ #TODO should be a secret in repository settings
+          username: ${{ secrets.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_PASSWORD }} 
 
       - name: Docker compose down and remove old images
-        # /home/pi/compose_test/ test directory, the directory written here should contain the docker-compose.yml file
-        working-directory: /home/pi/compose_test/
         run: docker compose down --rmi local --volumes
 
       - name: Compose order management
         if: always()
-        # /home/pi/compose_test/ test directory, the directory written here should contain the docker-compose.yml file
-        run: docker compose -f /home/pi/compose_test/docker-compose.yml up --build -d
+        run: docker compose -f docker-compose-raspi.yml up --build -d
