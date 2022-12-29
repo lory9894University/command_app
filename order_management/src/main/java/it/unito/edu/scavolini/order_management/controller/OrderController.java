@@ -80,7 +80,7 @@ public class OrderController {
     }
 
     /**
-     * Method used to mark and order (delivery or take away) accepted and eligible to be sent to the kitchen
+     * Method used to mark an order (delivery or take away) accepted and eligible to be sent to the kitchen
      * NOTE: Preorder orders should not be accepted here
      *      but in Reservation microservice since are related to a reservation
      * */
@@ -97,7 +97,7 @@ public class OrderController {
 
 
     /**
-     * Method used to mark and order (delivery or take away) rejected and not eligible to be sent to the kitchen
+     * Method used to mark an order (delivery or take away) rejected and not eligible to be sent to the kitchen
      * */
     @PutMapping("/reject/{id}")
     public ResponseEntity<Order> rejectOrder(@PathVariable(value = "id") Long orderId) {
