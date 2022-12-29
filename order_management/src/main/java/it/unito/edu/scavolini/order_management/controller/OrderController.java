@@ -84,7 +84,7 @@ public class OrderController {
      * NOTE: Preorder orders should not be accepted here
      *      but in Reservation microservice since are related to a reservation
      * */
-    @PutMapping("/order/accept/{id}")
+    @PutMapping("/accept/{id}")
     public ResponseEntity<Order> acceptOrder(@PathVariable(value = "id") Long orderId) {
         Order order = orderRepository.findDistinctFirstById(orderId);
         if (order == null) {
@@ -99,7 +99,7 @@ public class OrderController {
     /**
      * Method used to mark and order (delivery or take away) rejected and not eligible to be sent to the kitchen
      * */
-    @PutMapping("/order/reject/{id}")
+    @PutMapping("/reject/{id}")
     public ResponseEntity<Order> rejectOrder(@PathVariable(value = "id") Long orderId) {
         Order order = orderRepository.findDistinctFirstById(orderId);
         if (order == null) {
