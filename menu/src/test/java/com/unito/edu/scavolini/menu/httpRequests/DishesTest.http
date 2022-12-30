@@ -4,9 +4,9 @@ content-type: application/json
 
 {
   "name": "dish1",
-    "price": 100,
-    "description": "This is the final Petrone, the real one, the one that will make you happy, the one that will make you cry, the one that will make you feel alive again",
-    "course": "Petrone"
+  "price": 100,
+  "description": "This is the final Petrone, the real one, the one that will make you happy, the one that will make you cry, the one that will make you feel alive again",
+  "course": "Petrone"
 }
 
 ### Add list of dishes

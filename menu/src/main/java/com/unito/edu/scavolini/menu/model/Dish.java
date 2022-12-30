@@ -24,24 +24,8 @@ public class Dish {
     @Column(name = "course", nullable = false)
     private String course;
 
-    public Dish(String name, Double price, String description, String imgURL, String course) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.imgURL = imgURL;
-        this.course = course;
-    }
-
     public Dish() {
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -66,10 +50,6 @@ public class Dish {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImgURL() {
-        return imgURL;
     }
 
     public void setImgURL(String imgURL) {

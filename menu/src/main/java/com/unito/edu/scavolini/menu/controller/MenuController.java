@@ -12,9 +12,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/menu")
 public class MenuController {
-    //region Repositories
     @Autowired
-    private DishRepository dishRepository;
+    MenuController(DishRepository dishRepository) {
+        this.dishRepository = dishRepository;
+    }
+
+    //region Repositories
+    private final DishRepository dishRepository;
     //endregion
 
     //region API MenuController
@@ -28,6 +32,7 @@ public class MenuController {
 
         return dishRepository.findAll();
     }
+
     @PostMapping(value = "/addDish")
     public ResponseEntity<Dish> postDish(@RequestBody Dish dish) throws InvalidDishException {
         checkDishIsValid(dish);
@@ -45,9 +50,8 @@ public class MenuController {
     }
 
     @PostMapping(value = "/deleteDish")
-    public ResponseEntity<Dish> deleteDish(@RequestBody DishId dishId) throws InvalidDishException {
+    public ResponseEntity<Dish> deleteDish(@RequestBody DishId dishId) {
         Dish dishToDelete = dishRepository.findDistinctFirstById(dishId.id);
-        checkDishIsValid(dishToDelete);
         dishRepository.delete(dishToDelete);
         return ResponseEntity.ok(dishToDelete);
     }
@@ -87,7 +91,6 @@ public class MenuController {
         return ResponseEntity.ok(updatedDish);
     }
     //endregion
-
 
     //region private methods
 
