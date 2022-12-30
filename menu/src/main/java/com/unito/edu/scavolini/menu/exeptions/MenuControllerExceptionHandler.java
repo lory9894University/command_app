@@ -1,7 +1,6 @@
 package com.unito.edu.scavolini.menu.exeptions;
 
 import com.unito.edu.scavolini.menu.model.Dish;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

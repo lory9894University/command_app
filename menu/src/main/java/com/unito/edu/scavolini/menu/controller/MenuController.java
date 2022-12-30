@@ -1,7 +1,5 @@
 package com.unito.edu.scavolini.menu.controller;
 
-import com.unito.edu.scavolini.menu.model.CartEntry;
-import com.unito.edu.scavolini.menu.repository.CartEntryRepository;
 import com.unito.edu.scavolini.menu.repository.DishRepository;
 import com.unito.edu.scavolini.menu.exeptions.InvalidDishException;
 import com.unito.edu.scavolini.menu.model.Dish;
@@ -17,8 +15,6 @@ public class MenuController {
     //region Repositories
     @Autowired
     private DishRepository dishRepository;
-    @Autowired
-    private CartEntryRepository cartEntryRepository;
     //endregion
 
     //region API MenuController
@@ -52,7 +48,6 @@ public class MenuController {
     public ResponseEntity<Dish> deleteDish(@RequestBody DishId dishId) throws InvalidDishException {
         Dish dishToDelete = dishRepository.findDistinctFirstById(dishId.id);
         checkDishIsValid(dishToDelete);
-        checkDishNotInCartEntry(dishToDelete);
         dishRepository.delete(dishToDelete);
         return ResponseEntity.ok(dishToDelete);
     }
@@ -93,6 +88,9 @@ public class MenuController {
     }
     //endregion
 
+
+    //region private methods
+
     private void checkDishIsValid(Dish dish) throws InvalidDishException {
         if (dish == null){
             throw new InvalidDishException("Dish cannot be null", null);
@@ -111,14 +109,6 @@ public class MenuController {
         }
     }
 
-    //region private methods
-    private void checkDishNotInCartEntry(Dish dish) throws InvalidDishException {
-        checkDishIsValid(dish);
-        CartEntry cartEntry = cartEntryRepository.findDistinctFirstByDishId(dish.getId());
-        if (cartEntry != null) {
-            throw new InvalidDishException("Dish is in cart entry", dish);
-        }
-    }
     //endregion
 
     //region Record classes
