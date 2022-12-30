@@ -35,14 +35,18 @@ public class RabbitMqSender {
 
         try {
             String jsonPreparation = objectMapper.writeValueAsString(preparation);
-            this.rabbitTemplate.convertAndSend(this.kitchenQueue.getName(), jsonPreparation);
 
             // Order sent to kitchen, update order state to not take it again and resend preparations
-            Order order = preparation.getOrder();
-            order.setOrderState(OrderStateEnum.SENT_TO_KITCHEN);
-            orderRepository.save(order);
+            try {
+                this.rabbitTemplate.convertAndSend(this.kitchenQueue.getName(), jsonPreparation);
+                Order order = preparation.getOrder();
+                order.setOrderState(OrderStateEnum.SENT_TO_KITCHEN);
+                orderRepository.save(order);
+                System.out.println("\n\n[S] Sent '" + preparation + "'");
+            } catch (Exception e){
+                e.printStackTrace();
+            }
 
-            System.out.println("\n\n[S] Sent '" + preparation + "'");
         } catch (Exception e) {
             e.printStackTrace();
         }
