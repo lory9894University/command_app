@@ -10,5 +10,9 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
 
     List<Reservation> findAll();
 
+    List<Reservation> findAllByOrderNull();
+
+    List<Reservation> findAllByOrderNotNull();
+
     Reservation findDistinctFirstById(Long id);
 }

@@ -1,5 +1,6 @@
 package it.unito.edu.scavolini.reservation.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,16 +23,18 @@ public class Reservation {
 
     @Column(name = "user")
     @NotNull
-    private String user; // TODO add user
+    private String user; // TODO add user?
 
     @Column(name = "table_num")
     private String tableNum;
 
     @NotNull
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private ReservationStateEnum state;
 
