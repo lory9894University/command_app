@@ -1,0 +1,51 @@
+### Add dish
+POST http://localhost:8080/menu/addDish
+content-type: application/json
+
+{
+  "name": "dish1",
+    "price": 100,
+    "description": "This is the final Petrone, the real one, the one that will make you happy, the one that will make you cry, the one that will make you feel alive again",
+    "course": "Petrone"
+}
+
+### Add list of dishes
+POST http://localhost:8080/menu/addDishes
+content-type: application/json
+
+[
+    {
+        "name": "The infamous Petrone",
+        "price": 72.82,
+        "description": "This is definately an infamous Petrone, this one will make you feel like you are in heaven, this one will make you feel like you are in hell, this one will make you feel like you are in the middle of nowhere",
+        "course": "Petrone"
+    },
+    {
+        "name": "The standard Petrone",
+        "price": 14.99,
+        "description": "This is a normal Petrone, nothing special, nothing to write home about, just a normal Petrone",
+        "course": "Petrone"
+    }
+]
+
+### Get all dishes
+GET http://localhost:8080/menu/getDishes
+
+### Update dish
+POST http://localhost:8080/menu/updateDish
+content-type: application/json
+
+{
+    "id": 1,
+    "name": "The UNreal Petrino",
+    "price": 666,
+    "description": "This is not a Petrone, this is a Petrino, the one that will make you sad, the one that will make you cry, the one that will make you feel dead again"
+}
+
+### Delete dish
+POST http://localhost:8080/menu/deleteDish
+content-type: application/json
+
+{
+  "id": 1
+}

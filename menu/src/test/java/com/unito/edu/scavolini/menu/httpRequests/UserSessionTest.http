@@ -1,0 +1,26 @@
+### Add user session
+POST http://localhost:8080/user/addUserSession
+content-type: application/json
+
+{
+
+}
+
+### Delete user session
+POST http://localhost:8080/user/deleteUserSession
+content-type: application/json
+
+{
+  "id": 1
+}
+
+### Get user sessions
+GET http://localhost:8080/user/getUserSessions
+
+### Get user session by id
+GET http://localhost:8080/user/getUserSessionById
+content-type: application/json
+
+{
+  "id": 1
+}

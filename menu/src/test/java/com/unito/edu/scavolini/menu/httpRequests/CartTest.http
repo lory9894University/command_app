@@ -1,0 +1,55 @@
+### Create a cart
+POST http://localhost:8080/cart/createCart
+content-type: application/json
+
+{
+    "userSession": {
+        "id": "1"
+    }
+}
+
+### Get a cart
+GET http://localhost:8080/cart/getCartById
+content-type: application/json
+
+{
+  "id": 2
+}
+
+### Get all carts
+GET http://localhost:8080/cart/getAllCarts
+
+### Add first dish to cart
+POST http://localhost:8080/cart/addDishToCart
+content-type: application/json
+
+{
+  "cartId": 2,
+  "dishId": 1
+}
+
+### Add second dish to cart
+POST http://localhost:8080/cart/addDishToCart
+content-type: application/json
+
+{
+  "cartId": 2,
+  "dishId": 2
+}
+
+### Get cart entries by cart id
+GET http://localhost:8080/cart/getCartEntriesByCartId
+content-type: application/json
+
+{
+  "id": 2
+}
+
+### Remove dish from cart
+POST http://localhost:8080/cart/removeDishFromCart
+content-type: application/json
+
+{
+  "cartId": 2,
+  "dishId": 2
+}
