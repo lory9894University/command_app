@@ -42,11 +42,8 @@ public class RabbitMqReceiver {
             Preparation preparation = objectMapper.readValue(message, Preparation.class);
             System.out.println("Preparation:\n <" + preparation + ">");
 
-            Preparation newPreparation = new Preparation();
-            newPreparation.setName(preparation.getName());
-            newPreparation.setTableNum(preparation.getTableNum());
-            newPreparation.setOrder(preparation.getOrder());
-            newPreparation.setState(preparation.getState());
+            // reset id in order to add a new entry, otherwise it could overwrite one already present
+            preparation.setId(null);
 
             //preparationRepository.save(newPreparation);
 
@@ -81,8 +78,7 @@ public class RabbitMqReceiver {
     }
 
     /**
-     * Receive message from waiter on deliveredPreparation queue to mark
-     * the preparation as delivered and delete it from the DB
+     * Receive message from reservation microservice with orders related to reservations (preorders)
      * */
     @RabbitListener(queues = "preorder")
     public void receivePreorder(@Payload String message) {
@@ -92,13 +88,10 @@ public class RabbitMqReceiver {
 
         try {
             Order order = objectMapper.readValue(message, Order.class);
-            System.out.println("\nOrder:\n <" + order + ">");
 
-            if (order.getDateTime() == null) {
-                order.setDateTime(LocalDateTime.now());
-            } else {
-                order.setDateTime(order.getDateTime());
-            }
+            // reset id in order to add a new entry, otherwise it could overwrite one already present
+            order.setId(null);
+            System.out.println("\nOrder:\n <" + order + ">");
 
             Order savedOrder = orderRepository.save(order);
 
