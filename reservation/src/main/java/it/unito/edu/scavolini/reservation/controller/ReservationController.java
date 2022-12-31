@@ -6,9 +6,11 @@ import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
 import it.unito.edu.scavolini.reservation.model.Order;
 import it.unito.edu.scavolini.reservation.model.Preparation;
 import it.unito.edu.scavolini.reservation.model.Reservation;
+import it.unito.edu.scavolini.reservation.model.User;
 import it.unito.edu.scavolini.reservation.repository.OrderRepository;
 import it.unito.edu.scavolini.reservation.repository.PreparationRepository;
 import it.unito.edu.scavolini.reservation.repository.ReservationRepository;
+import it.unito.edu.scavolini.reservation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ public class ReservationController {
     PreparationRepository preparationRepository;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     RabbitMqSender rabbitMqSender;
 
     @PostMapping(value = "/create", consumes = "application/json")
@@ -40,6 +45,9 @@ public class ReservationController {
         if (reservation.getOrder() != null){
             return ResponseEntity.badRequest().build();
         }
+
+        User savedUser = userRepository.save(reservation.getUser());
+        reservation.setUser(savedUser);
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
@@ -64,16 +72,22 @@ public class ReservationController {
             // reservationOrder.setDateTime(reservation.getDateTime());
         }
 
+        // set Order information while waiting acceptance or rejection and save
         reservationOrder.setTableNum("ND");
         reservationOrder.setOrderState(OrderStateEnum.WAITING);
+        reservationOrder.setUser(reservation.getUser()); // TODO is it right?
         Order savedOrder = orderRepository.save(reservationOrder);
+
+        // get and save user
+        User savedUser = userRepository.save(reservation.getUser());
+        reservation.setUser(savedUser);
 
         reservation.setOrder(savedOrder);
         Reservation savedReservation = reservationRepository.save(reservation);
 
         reservationOrder = savedReservation.getOrder();
 
-        // sending single preparations of the order to the kitchen
+        // save single preparations to DB
         for (Preparation preparation : reservationOrder.getPreparationList()) {
             // TODO check if it is necessary to recreate the preparation
             Preparation newPreparation = new Preparation();
@@ -94,11 +108,18 @@ public class ReservationController {
         if (reservation == null) {
             return ResponseEntity.notFound().build();
         }
+        // set Order as accepted and save table number assigned
         reservation.setState(ReservationStateEnum.ACCEPTED);
         reservation.setTableNum(tableNum);
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // if there is a order this is a Preorder, the Order should be sent to Order management
+        // if there is an Order this is a Preorder, the Order should be sent to Order management
+        acceptAndSendOrder(tableNum, savedReservation);
+
+        return ResponseEntity.ok(savedReservation);
+    }
+
+    private void acceptAndSendOrder(String tableNum, Reservation savedReservation) {
         Order reservationOrder = savedReservation.getOrder();
         if (reservationOrder != null){
             reservationOrder.setTableNum(tableNum);
@@ -111,8 +132,6 @@ public class ReservationController {
             }
             rabbitMqSender.sendPreorder(savedOrder);
         }
-
-        return ResponseEntity.ok(savedReservation);
     }
 
     @PutMapping(value = "/reject/{id}")
@@ -124,8 +143,8 @@ public class ReservationController {
         reservation.setState(ReservationStateEnum.REJECTED);
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // if there is a order this is a Preorder, the Order should be sent to Order management
-        // TODO: It could not be sent, to decide
+        // if there is an Order this is a Preorder, the Order should be sent to Order management
+        // TODO: It could not be sent because it's rejected, to decide
         Order reservationOrder = savedReservation.getOrder();
         if (reservationOrder != null){
             reservationOrder.setOrderState(OrderStateEnum.REJECTED);

@@ -1,6 +1,8 @@
 package it.unito.edu.scavolini.reservation.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -21,9 +23,14 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "user")
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "people_num")
     @NotNull
-    private String user; // TODO add user?
+    private int peopleNum;
 
     @Column(name = "table_num")
     private String tableNum;

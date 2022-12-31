@@ -1,5 +1,6 @@
 package it.unito.edu.scavolini.reservation.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.unito.edu.scavolini.reservation.enums.OrderStateEnum;
@@ -54,6 +55,11 @@ public class Order {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
     @JsonManagedReference
     private List<Preparation> preparationList;
+
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);
