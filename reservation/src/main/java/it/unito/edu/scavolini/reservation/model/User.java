@@ -30,4 +30,8 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     @JsonManagedReference
     private List<Reservation> reservationList;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+    @JsonManagedReference
+    private List<Order> orderList;
 }
