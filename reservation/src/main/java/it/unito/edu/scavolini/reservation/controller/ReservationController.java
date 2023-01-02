@@ -1,5 +1,8 @@
 package it.unito.edu.scavolini.reservation.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import it.unito.edu.scavolini.reservation.enums.OrderStateEnum;
 import it.unito.edu.scavolini.reservation.enums.PreparationStatesEnum;
 import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
@@ -39,6 +42,12 @@ public class ReservationController {
 
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+
+        FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
+        if (firebaseToken == null){
+            return ResponseEntity.badRequest().build();
+        }
+
         reservation.setTableNum("ND"); // table num should be decided by the restaurant
         reservation.setState(ReservationStateEnum.WAITING);
 
@@ -46,8 +55,12 @@ public class ReservationController {
             return ResponseEntity.badRequest().build();
         }
 
-        User savedUser = userRepository.save(reservation.getUser());
+        User reservationUser = reservation.getUser();
+        reservationUser.setUserId(firebaseToken.getUid());
+        reservationUser.setUsername(firebaseToken.getName());
+        User savedUser = userRepository.save(reservationUser);
         reservation.setUser(savedUser);
+
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
@@ -56,6 +69,12 @@ public class ReservationController {
 
     @PostMapping(value = "/create/preorder", consumes = "application/json")
     public ResponseEntity<Reservation> createPreorder(@RequestBody Reservation reservation) {
+
+        FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
+        if (firebaseToken == null){
+            return ResponseEntity.badRequest().build();
+        }
+
         reservation.setTableNum("ND"); // table num should be decided by the restaurant
         reservation.setState(ReservationStateEnum.WAITING);
         if (reservation.getOrder() == null){
@@ -79,7 +98,10 @@ public class ReservationController {
         Order savedOrder = orderRepository.save(reservationOrder);
 
         // get and save user
-        User savedUser = userRepository.save(reservation.getUser());
+        User reservationUser = reservation.getUser();
+        reservationUser.setUserId(firebaseToken.getUid());
+        reservationUser.setUsername(firebaseToken.getName());
+        User savedUser = userRepository.save(reservationUser);
         reservation.setUser(savedUser);
 
         reservation.setOrder(savedOrder);
@@ -174,6 +196,16 @@ public class ReservationController {
         // get only preorders (not just reservations): aka reservations with orders
         List<Reservation> reservations = reservationRepository.findAllByOrderNotNull();
         return ResponseEntity.ok(reservations);
+    }
+
+    private FirebaseToken checkFirebaseAuth(String idToken){
+        FirebaseToken decodedToken = null;
+        try {
+            decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        } catch (FirebaseAuthException e) {
+            return null;
+        }
+        return decodedToken;
     }
 
 
