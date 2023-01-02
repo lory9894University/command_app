@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/")
 public class MenuController {
     @Autowired
     MenuController(DishRepository dishRepository) {

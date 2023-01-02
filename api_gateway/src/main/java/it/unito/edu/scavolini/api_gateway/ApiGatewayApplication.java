@@ -16,6 +16,8 @@ public class ApiGatewayApplication {
     @Value("${kitchen_microservice_url}")
     private String kitchen_microservice_url;
 
+    @Value("${menu_microservice_url}")
+    private String menu_microservice_url;
 
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
@@ -32,6 +34,10 @@ public class ApiGatewayApplication {
                 .path("/kitchen/**")
                 .filters(f -> f.rewritePath("/kitchen/(?<segment>.*)", "/${segment}"))
                 .uri(kitchen_microservice_url))
+            .route(p -> p
+                .path("/menu/**")
+                .filters(f -> f.rewritePath("/menu/(?<segment>.*)", "/${segment}"))
+                .uri(menu_microservice_url))
             .build();
     }
 

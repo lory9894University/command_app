@@ -30,12 +30,12 @@ services:
       - WAITER_PORT=8080
       - KITCHEN_HOST=kitchen
       - KITCHEN_PORT=8080
+      - MENU_HOST=menu
+      - MENU_PORT=8080
 
   db-kitchen:
     container_name: db-kitchen
     image: "mariadb"
-    ports:
-      - "3306:3306"
     networks:
       - scavolini-network
       - scavolini-kitchen-internal
@@ -71,8 +71,6 @@ services:
   db-waiter:
       container_name: mariadb_waiter
       image: "mariadb"
-      ports:
-        - "3307:3306"
       networks:
         - scavolini-network
         - scavolini-waiter-internal
@@ -104,15 +102,46 @@ services:
       - scavolini-network
       - scavolini-waiter-internal
 
-
+  dbmariadb:
+    container_name: mariadb_menu
+    image: "mariadb"
+    networks:
+      - scavolini-network
+      - scavolini-menu-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: menu
+      MARIADB_PASSWORD: menu
+      MARIADB_DATABASE: menu
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-db-menu
+        target: /data
+        volume:
+          nocopy: true
+  menu:
+    build: ./menu/
+    image: scavolini-menu
+    container_name: scavolini-menu
+    environment:
+      MARIADB_HOST: mariadb_menu
+    restart: unless-stopped
+    depends_on:
+      - dbmariadb
+    networks:
+      - scavolini-network
+      - scavolini-menu-internal
 
 networks:
     scavolini-network:
     scavolini-kitchen-internal:
     scavolini-waiter-internal:
+    scavolini-menu-internal:
     frontend-network:
 
 volumes:
     data-db-kitchen:
     data-db-waiter:
+    data-db-menu:
     data-rabbitmq:
