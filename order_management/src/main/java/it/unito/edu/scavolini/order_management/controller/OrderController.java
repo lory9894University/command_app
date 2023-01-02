@@ -1,5 +1,8 @@
 package it.unito.edu.scavolini.order_management.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import it.unito.edu.scavolini.order_management.enums.OrderStateEnum;
 import it.unito.edu.scavolini.order_management.enums.OrderTypeEnum;
 import it.unito.edu.scavolini.order_management.enums.PreparationStatesEnum;
@@ -52,6 +55,13 @@ public class OrderController {
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
 
+        if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+            FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
+            if (firebaseToken == null) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
         if (order.getDateTime() == null) {
             order.setDateTime(LocalDateTime.now());
         } else {
@@ -101,6 +111,7 @@ public class OrderController {
      * */
     @PutMapping("/reject/{id}")
     public ResponseEntity<Order> rejectOrder(@PathVariable(value = "id") Long orderId) {
+
         Order order = orderRepository.findDistinctFirstById(orderId);
         if (order == null) {
             return ResponseEntity.notFound().build();
@@ -144,6 +155,16 @@ public class OrderController {
         ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
             OrderStateEnum.ACCEPTED, OrderTypeEnum.PREORDER, LocalDateTime.now().plusHours(1)));
         return ordersToPrepare;
+    }
+
+    private FirebaseToken checkFirebaseAuth(String idToken) {
+        FirebaseToken decodedToken = null;
+        try {
+            decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        } catch (FirebaseAuthException e) {
+            return null;
+        }
+        return decodedToken;
     }
 
 
