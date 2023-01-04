@@ -221,6 +221,11 @@ public class ReservationController {
     @GetMapping(value = "/all/waiting")
     public ResponseEntity<List<Reservation>> getAllWaiting(){
         List<Reservation> reservations = reservationRepository.findAllByState(ReservationStateEnum.WAITING);
+
+        for (Reservation reservation : reservations) {
+            reservation.setReservationName(reservation.getUser().getUsername());
+        }
+
         return ResponseEntity.ok(reservations);
     }
 
