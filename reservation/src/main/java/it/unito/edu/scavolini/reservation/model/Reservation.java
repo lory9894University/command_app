@@ -48,4 +48,7 @@ public class Reservation {
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
+
+    @Transient
+    private String reservationName;
 }

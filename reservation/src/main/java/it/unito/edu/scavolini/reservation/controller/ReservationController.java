@@ -70,6 +70,7 @@ public class ReservationController {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
+        savedReservation.setReservationName(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -146,6 +147,7 @@ public class ReservationController {
             Preparation savedPreparation = preparationRepository.save(newPreparation);
         }
 
+        savedReservation.setReservationName(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -163,6 +165,7 @@ public class ReservationController {
         // if there is an Order this is a Preorder, the Order should be sent to Order management
         acceptAndSendOrder(tableNum, savedReservation);
 
+        savedReservation.setReservationName(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -199,6 +202,7 @@ public class ReservationController {
             rabbitMqSender.sendPreorder(savedOrder);
         }
 
+        savedReservation.setReservationName(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -206,6 +210,11 @@ public class ReservationController {
     @GetMapping(value = "/all")
     public ResponseEntity<List<Reservation>> getAll(){
         List<Reservation> reservations = reservationRepository.findAll();
+
+        for (Reservation reservation : reservations) {
+            reservation.setReservationName(reservation.getUser().getUsername());
+        }
+
         return ResponseEntity.ok(reservations);
     }
 
@@ -213,6 +222,11 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> getReservations() {
         // get only reservations (not preorders): aka reservations without orders
         List<Reservation> reservations = reservationRepository.findAllByOrderNull();
+
+        for (Reservation reservation : reservations) {
+            reservation.setReservationName(reservation.getUser().getUsername());
+        }
+
         return ResponseEntity.ok(reservations);
     }
 
@@ -220,6 +234,11 @@ public class ReservationController {
     public ResponseEntity<List<Reservation>> getPreorders() {
         // get only preorders (not just reservations): aka reservations with orders
         List<Reservation> reservations = reservationRepository.findAllByOrderNotNull();
+
+        for (Reservation reservation : reservations) {
+            reservation.setReservationName(reservation.getUser().getUsername());
+        }
+
         return ResponseEntity.ok(reservations);
     }
 
