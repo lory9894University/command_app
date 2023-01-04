@@ -1,6 +1,6 @@
 version: "3.2"
 services:
-  dbmariadb:
+  db-reservation:
     container_name: db-reservation
     image: "mariadb"
     ports:
@@ -28,7 +28,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - dbmariadb
+      - db-reservation
       - rabbitmq
     networks:
       - scavolini-network
