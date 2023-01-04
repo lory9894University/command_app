@@ -8,8 +8,10 @@ import it.unito.edu.scavolini.order_management.enums.OrderTypeEnum;
 import it.unito.edu.scavolini.order_management.enums.PreparationStatesEnum;
 import it.unito.edu.scavolini.order_management.model.Order;
 import it.unito.edu.scavolini.order_management.model.Preparation;
+import it.unito.edu.scavolini.order_management.model.User;
 import it.unito.edu.scavolini.order_management.repository.OrderRepository;
 import it.unito.edu.scavolini.order_management.repository.PreparationRepository;
+import it.unito.edu.scavolini.order_management.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -32,12 +34,22 @@ public class OrderController {
     private PreparationRepository preparationRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private RabbitMqSender rabbitMqSender;
 
     @GetMapping("/orders")
-    public List<Order> getAllOrders(){
+    public ResponseEntity<List<Order>> getAllOrders(){
 
-        return orderRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
+        for (Order order : orders) {
+            if (order.getUser() != null) {
+                order.setOrderName(order.getUser().getUsername());
+            }
+        }
+
+        return ResponseEntity.ok(orders);
     }
 
     @DeleteMapping("/remove/{id}")
@@ -54,12 +66,16 @@ public class OrderController {
      * */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-
+        User orderUser = order.getUser();
         if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
             FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
             if (firebaseToken == null) {
                 return ResponseEntity.badRequest().build();
             }
+            orderUser.setUserId(firebaseToken.getUid());
+            orderUser.setUsername(firebaseToken.getName());
+            User savedUser = userRepository.save(orderUser);
+            order.setUser(savedUser);
         }
 
         if (order.getDateTime() == null) {
@@ -86,6 +102,9 @@ public class OrderController {
             }
         }
 
+        if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+        }
         return ResponseEntity.ok(savedOrder);
     }
 
@@ -101,8 +120,12 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
         order.setOrderState(OrderStateEnum.ACCEPTED);
-        Order updatedOrder = orderRepository.save(order);
-        return ResponseEntity.ok(updatedOrder);
+        Order savedOrder = orderRepository.save(order);
+
+        if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+        }
+        return ResponseEntity.ok(savedOrder);
     }
 
 
@@ -117,8 +140,12 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
         order.setOrderState(OrderStateEnum.REJECTED);
-        Order updatedOrder = orderRepository.save(order);
-        return ResponseEntity.ok(updatedOrder);
+        Order savedOrder = orderRepository.save(order);
+
+        if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+        }
+        return ResponseEntity.ok(savedOrder);
     }
 
     /**
