@@ -209,6 +209,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    @GetMapping(value = "/all/waiting")
+    public ResponseEntity<List<Reservation>> getAllWaiting(){
+        List<Reservation> reservations = reservationRepository.findAllByState(ReservationStateEnum.WAITING);
+        return ResponseEntity.ok(reservations);
+    }
+
     @GetMapping(value = "/reservations")
     public ResponseEntity<List<Reservation>> getReservations() {
         // get only reservations (not preorders): aka reservations without orders

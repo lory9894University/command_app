@@ -1,5 +1,6 @@
 package it.unito.edu.scavolini.reservation.repository;
 
+import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
 import it.unito.edu.scavolini.reservation.model.Reservation;
 import org.springframework.data.repository.CrudRepository;
 
@@ -15,4 +16,6 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     List<Reservation> findAllByOrderNotNull();
 
     Reservation findDistinctFirstById(Long id);
+
+    List<Reservation> findAllByState(ReservationStateEnum waiting);
 }
