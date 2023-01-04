@@ -23,7 +23,7 @@ public class ReservationApplication {
     private static void startFirebase(){
         try {
             FileInputStream serviceAccount =
-                new FileInputStream("C:\\Users\\Gianl\\Desktop\\UniTo\\taas\\firebase\\serviceAccountKey.json");
+                new FileInputStream("serviceAccountKey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -31,9 +31,11 @@ public class ReservationApplication {
 
             FirebaseApp.initializeApp(options);
         } catch (Exception e) {
-            System.out.println("Exception while logging with firebase");
+            System.out.println("|||||||||||||||||||| Exception while logging with firebase ||||||||||||||||||||");
             e.printStackTrace();
         }
+        System.out.println("OOOOOOOOOOOOO Firebase start end OOOOOOOOOOOOO");
+
     }
 
 
