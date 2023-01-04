@@ -61,6 +61,9 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Transient
+    private String orderUsername;
+
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);
         return this.preparationList;
