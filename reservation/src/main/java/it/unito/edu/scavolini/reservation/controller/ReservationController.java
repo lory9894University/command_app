@@ -40,26 +40,32 @@ public class ReservationController {
     @Autowired
     RabbitMqSender rabbitMqSender;
 
+    private boolean authEnabled = false;
+
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+        User reservationUser = reservation.getUser();
+        if (authEnabled) {
+            FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
+            if (firebaseToken == null) {
+                return ResponseEntity.badRequest().build();
+            }
 
-        FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
-        if (firebaseToken == null){
-            return ResponseEntity.badRequest().build();
+            reservationUser.setUserId(firebaseToken.getUid());
+            reservationUser.setUsername(firebaseToken.getName());
         }
+
+        User savedUser = userRepository.save(reservationUser);
+
+        reservation.setUser(savedUser);
+
 
         reservation.setTableNum("ND"); // table num should be decided by the restaurant
         reservation.setState(ReservationStateEnum.WAITING);
 
-        if (reservation.getOrder() != null){
+        if (reservation.getOrder() != null) {
             return ResponseEntity.badRequest().build();
         }
-
-        User reservationUser = reservation.getUser();
-        reservationUser.setUserId(firebaseToken.getUid());
-        reservationUser.setUsername(firebaseToken.getName());
-        User savedUser = userRepository.save(reservationUser);
-        reservation.setUser(savedUser);
 
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -70,19 +76,35 @@ public class ReservationController {
     @PostMapping(value = "/create/preorder", consumes = "application/json")
     public ResponseEntity<Reservation> createPreorder(@RequestBody Reservation reservation) {
 
-        FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
-        if (firebaseToken == null){
-            return ResponseEntity.badRequest().build();
+        //////////////////////////// User handling ////////////////////////////
+        User reservationUser = reservation.getUser();
+        if (authEnabled) {
+            FirebaseToken firebaseToken = checkFirebaseAuth(reservation.getUser().getUserId());
+            if (firebaseToken == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            reservationUser.setUserId(firebaseToken.getUid());
+            reservationUser.setUsername(firebaseToken.getName());
         }
 
+        User savedUser = userRepository.save(reservationUser);
+
+
+        //////////////////////////// Reservation handling ////////////////////////////
         reservation.setTableNum("ND"); // table num should be decided by the restaurant
         reservation.setState(ReservationStateEnum.WAITING);
+
+        // if this is not a Preorder (does not contain an order) send error
         if (reservation.getOrder() == null){
             return ResponseEntity.badRequest().build(); // TODO send detailer error
         }
+
+
+        //////////////////////////// Reservation Order handling ////////////////////////////
         Order reservationOrder = reservation.getOrder();
 
-        // checking order to match information of preorder
+        // check Order to match information of Preorder
         if (reservationOrder.getDateTime() == null ||
             !reservationOrder.getDateTime().equals(reservation.getDateTime())) {
             // reservation and order datetime should match
@@ -91,22 +113,25 @@ public class ReservationController {
             // reservationOrder.setDateTime(reservation.getDateTime());
         }
 
-        // set Order information while waiting acceptance or rejection and save
+        // set and save Order information while waiting acceptance or rejection
         reservationOrder.setTableNum("ND");
         reservationOrder.setOrderState(OrderStateEnum.WAITING);
-        reservationOrder.setUser(reservation.getUser()); // TODO is it right?
+
+        // set Order User
+        reservationOrder.setUser(savedUser);
+
+        // all Order data is set --> save Order
         Order savedOrder = orderRepository.save(reservationOrder);
 
-        // get and save user
-        User reservationUser = reservation.getUser();
-        reservationUser.setUserId(firebaseToken.getUid());
-        reservationUser.setUsername(firebaseToken.getName());
-        User savedUser = userRepository.save(reservationUser);
+        // set Reservation Order and User
         reservation.setUser(savedUser);
-
         reservation.setOrder(savedOrder);
+
+        // all Reservation data is set --> save Reservation
         Reservation savedReservation = reservationRepository.save(reservation);
 
+
+        //////////////////////////// Order Preparations handling ////////////////////////////
         reservationOrder = savedReservation.getOrder();
 
         // save single preparations to DB
@@ -206,6 +231,12 @@ public class ReservationController {
             return null;
         }
         return decodedToken;
+    }
+
+    @GetMapping(value = "/switchauth")
+    public ResponseEntity<String> switchAuth(){ // TODO: INSECURE - USED TO TEST - DELETE
+        this.authEnabled = !this.authEnabled;
+        return ResponseEntity.ok("||||||||||||| Auth enabled: " + this.authEnabled + " |||||||||||||");
     }
 
 
