@@ -12,6 +12,13 @@ content-type: application/json
     "course": "Panino"
   },
   {
+    "name": "il Pizzaiolo",
+    "price": 5.50,
+    "description": "panino con prosciutto e mozzarella",
+    "imageUrl": null,
+    "course": "Panino"
+  },
+  {
     "name": "Coppo di Vino",
     "price": 100.00,
     "description": "vino rosso",
@@ -24,7 +31,36 @@ content-type: application/json
     "description": "hoha hola",
     "imageUrl": "http://www.di.unito.it/~capecchi/img/me.jpg",
     "course": "Bevanda"
+  },
+  {
+    "name": "Pasta",
+    "price": 7.00,
+    "description": "pasta con pomodoro e basilico",
+    "imageUrl": "https://www.google.com/search?q=pasta+al+pomodoro&client=ubuntu&channel=fs&sxsrf=ALiCzsZKwKSAlOhaNdTPqklt2r78kY1kHQ:1672997140793&tbm=isch&source=iu&ictx=1&vet=1&fir=5KTQOJ9Lz35lqM%252CHJXBM7p8SL4uZM%252C%252Fm%252F04qsz7%253Bc2n979IbXIMBHM%252CS7UhP1s2Jn4WwM%252C_%253BfHdes4iZCYai2M%252Cktm0UqOohDUAFM%252C_%253BFLGk527VQAGfgM%252CsL85FsJp_8S1BM%252C_%253BkdXScQo4LA1kkM%252CRGjByC6Ja0_BZM%252C_%253B4IGO5ywdrfzuhM%252CkSIBGl9tbzmhbM%252C_&usg=AI4_-kTuHjb2tknsAVWKHMzymzln6ggtYg&sa=X&ved=2ahUKEwjT3qWC0LL8AhUFSPEDHccHAmQQ_B16BAhxEAE#imgrc=5KTQOJ9Lz35lqM",
+    "course": "Primo"
+  },
+  {
+    "name": "ravioli sburro e salvia",
+    "price": 9.00,
+    "description": "ravioli con burro (forse) e salvia",
+    "imageUrl" : null,
+    "course": "Primo"
+  },
+  {
+    "name": "spezzatino di Bambi",
+    "price": 10.00,
+    "description": "come se l'avessi ucciso tu",
+    "imageUrl": "https://static.wikia.nocookie.net/disney/images/0/06/Bambi_-_Render.png/revision/latest?cb=20180324230751&path-prefix=it",
+    "course": "Secondo"
+  },
+  {
+    "name": "Porceddu",
+    "price": 10.00,
+    "description": "porceddu con patate, eyah",
+    "ImageUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.lacucinaitaliana.it%2Fnews%2Fin-primo-piano%2Fporceddu-polemica-expo-bruxelles%2F&psig=AOvVaw2EO8iITqFNbSn0I6V6d_sB&ust=1673083785898000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCOjzhPjQsvwCFQAAAAAdAAAAABAE",
+    "course": "Secondo"
   }
+
 ]
 
 ### Get all dishes
