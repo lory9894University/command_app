@@ -7,13 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @SpringBootApplication
 public class ReservationApplication {
-
-
 
     public static void main(String[] args) {
         startFirebase();
@@ -22,8 +18,13 @@ public class ReservationApplication {
 
     private static void startFirebase(){
         try {
+            // if running with docker the path must be "serviceAccountKey.json"
             FileInputStream serviceAccount =
                 new FileInputStream("serviceAccountKey.json");
+
+            // if running with IntelliJ the path must be "reservation/src/main/resources/serviceAccountKey.json"
+//            FileInputStream serviceAccount =
+//                new FileInputStream("reservation/src/main/resources/serviceAccountKey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -34,7 +35,7 @@ public class ReservationApplication {
             System.out.println("|||||||||||||||||||| Exception while logging with firebase ||||||||||||||||||||");
             e.printStackTrace();
         }
-        System.out.println("OOOOOOOOOOOOO Firebase start end OOOOOOOOOOOOO");
+        System.out.println("OOOOOOOOOOOOOOOOOOOO Firebase start end OOOOOOOOOOOOOOOOOOOO");
 
     }
 

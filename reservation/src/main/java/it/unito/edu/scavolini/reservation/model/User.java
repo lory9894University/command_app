@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ public class User {
 
     @Id
     @Column(name = "user_id")
+    @Length(min = 1, max = 150)
     private String userId;
 
     @Column(name = "username")
