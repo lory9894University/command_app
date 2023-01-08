@@ -18,8 +18,13 @@ public class OrderManagementApplication {
 
     private static void startFirebase(){
         try {
+            // if running with docker the path must be "serviceAccountKey.json"
+//            FileInputStream serviceAccount =
+//                new FileInputStream("serviceAccountKey.json");
+
+            // if running with IntelliJ the path must be "order_management/src/main/resources/serviceAccountKey.json"
             FileInputStream serviceAccount =
-                new FileInputStream("C:\\Users\\Gianl\\Desktop\\UniTo\\taas\\firebase\\serviceAccountKey.json");
+                new FileInputStream("order_management/src/main/resources/serviceAccountKey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -27,9 +32,10 @@ public class OrderManagementApplication {
 
             FirebaseApp.initializeApp(options);
         } catch (Exception e) {
-            System.out.println("Exception while logging with firebase");
+            System.out.println("|||||||||||||||||||| Exception while logging with firebase ||||||||||||||||||||");
             e.printStackTrace();
         }
+        System.out.println("OOOOOOOOOOOOOOOOOOOO Firebase start end OOOOOOOOOOOOOOOOOOOO");
     }
 
 }
