@@ -67,7 +67,12 @@ public class OrderController {
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         User orderUser = order.getUser();
-        if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+
+        if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT && orderUser == null) {
+            return ResponseEntity.badRequest().build(); // User is mandatory for not in restaurant orders
+        }
+
+        if (orderUser != null) { // if the user is registered
             FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
             if (firebaseToken == null) {
                 return ResponseEntity.badRequest().build();
@@ -102,7 +107,7 @@ public class OrderController {
             }
         }
 
-        if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
+        if (savedOrder.getUser() != null) {
             savedOrder.setOrderName(savedOrder.getUser().getUsername());
         }
         return ResponseEntity.ok(savedOrder);
