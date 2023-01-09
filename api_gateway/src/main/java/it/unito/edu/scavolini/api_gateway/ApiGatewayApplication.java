@@ -10,6 +10,13 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class ApiGatewayApplication {
+
+    @Value("${reservation_microservice_url}")
+    private String reservation_microservice_url;
+
+    @Value("${order_microservice_url}")
+    private String order_microservice_url;
+
     @Value("${waiter_microservice_url}")
     private String waiter_microservice_url;
 
@@ -38,6 +45,14 @@ public class ApiGatewayApplication {
                 .path("/menu/**")
                 .filters(f -> f.rewritePath("/menu/(?<segment>.*)", "/${segment}"))
                 .uri(menu_microservice_url))
+            .route(p -> p
+                .path("/reservation/**")
+                .filters(f -> f.rewritePath("/reservation/(?<segment>.*)", "/${segment}"))
+                .uri(reservation_microservice_url))
+            .route(p -> p
+                .path("/order/**")
+                .filters(f -> f.rewritePath("/order/(?<segment>.*)", "/${segment}"))
+                .uri(order_microservice_url))
             .build();
     }
 

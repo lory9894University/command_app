@@ -32,6 +32,77 @@ services:
       - KITCHEN_PORT=8080
       - MENU_HOST=menu
       - MENU_PORT=8080
+      - ORDER_HOST=order
+      - ORDER_PORT=8080
+      - RESERVATION_HOST=reservation
+      - RESERVATION_PORT=8080
+
+  db-reservation:
+    container_name: db-reservation
+    image: "mariadb"
+    networks:
+      - scavolini-network
+      - scavolini-reservation-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: reservation
+      MARIADB_PASSWORD: reservation
+      MARIADB_DATABASE: scavolini-reservation
+      TZ: Europe/Rome
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-db-reservation
+        target: /data
+        volume:
+          nocopy: true
+          
+  reservation:
+    build: ./reservation/
+    image: scavolini-reservation
+    container_name: reservation
+    depends_on:
+      - db-reservation
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-reservation-internal
+    environment:
+      - MARIA_DB_HOST=db-reservation
+      - RABBITMQ_HOST=rabbitmq
+
+  db-order:
+    container_name: db-order
+    image: "mariadb"
+    networks:
+      - scavolini-network
+      - scavolini-order-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: order
+      MARIADB_PASSWORD: order
+      MARIADB_DATABASE: scavolini-order
+      TZ: Europe/Rome
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-db-order
+        target: /data
+        volume:
+          nocopy: true
+  order:
+    build: ./order_management/
+    image: scavolini-order
+    container_name: order
+    depends_on:
+      - db-order
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-order-internal
+    environment:
+      - MARIA_DB_HOST=db-order
+      - RABBITMQ_HOST=rabbitmq
 
   db-kitchen:
     container_name: db-kitchen
@@ -102,7 +173,7 @@ services:
       - scavolini-network
       - scavolini-waiter-internal
 
-  dbmariadb:
+  db-menu:
     container_name: mariadb_menu
     image: "mariadb"
     networks:
@@ -126,18 +197,22 @@ services:
     container_name: scavolini-menu
     environment:
       MARIADB_HOST: mariadb_menu
+      RABBITMQ_HOST: rabbitmq
     restart: unless-stopped
     depends_on:
-      - dbmariadb
+      - db-menu
     networks:
       - scavolini-network
       - scavolini-menu-internal
+
 
 networks:
     scavolini-network:
     scavolini-kitchen-internal:
     scavolini-waiter-internal:
     scavolini-menu-internal:
+    scavolini-reservation-internal:
+    scavolini-order-internal:
     frontend-network:
 
 volumes:
@@ -145,3 +220,5 @@ volumes:
     data-db-waiter:
     data-db-menu:
     data-rabbitmq:
+    data-db-reservation:
+    data-db-order:

@@ -22,7 +22,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/reservation")
+@RequestMapping("/")
 public class ReservationController {
 
     @Autowired

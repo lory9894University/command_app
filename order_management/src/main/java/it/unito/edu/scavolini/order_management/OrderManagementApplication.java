@@ -19,12 +19,11 @@ public class OrderManagementApplication {
     private static void startFirebase(){
         try {
             // if running with docker the path must be "serviceAccountKey.json"
-//            FileInputStream serviceAccount =
-//                new FileInputStream("serviceAccountKey.json");
+           FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
 
             // if running with IntelliJ the path must be "order_management/src/main/resources/serviceAccountKey.json"
-            FileInputStream serviceAccount =
-                new FileInputStream("order_management/src/main/resources/serviceAccountKey.json");
+            //FileInputStream serviceAccount =
+            //    new FileInputStream("order_management/src/main/resources/serviceAccountKey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))

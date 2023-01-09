@@ -24,7 +24,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/")
 public class OrderController {
 
     @Autowired
