@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   dbmariadb:
-    container_name: mariadb
+    container_name: db-kitchen
     image: "mariadb"
     ports:
       - "3306:3306"
@@ -20,22 +20,36 @@ services:
         target: /data
         volume:
           nocopy: true
-  app:
+  kitchen:
     build: .
     image: scavolini-kitchen
-    container_name: scavolini-kitchen
+    container_name: kitchen
     ports:
       - "8080:8080"
     depends_on:
       - dbmariadb
+      - rabbitmq
     networks:
       - scavolini-network
       - scavolini-kitchen-internal
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/scavolini-kitchen
-      - SPRING_DATASOURCE_USERNAME=kitchen
-      - SPRING_DATASOURCE_PASSWORD=kitchen
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - MARIA_DB_HOST=db-kitchen
+      - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=kitchen
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
 
 networks:
     scavolini-network:
@@ -43,3 +57,4 @@ networks:
 
 volumes:
     data-mariadb:
+    data-rabbitmq:

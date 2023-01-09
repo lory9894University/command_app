@@ -1,0 +1,61 @@
+version: "3.2"
+services:
+  db-reservation:
+    container_name: db-reservation
+    image: "mariadb"
+    ports:
+      - "3306:3306"
+    networks:
+      - scavolini-network
+      - scavolini-reservation-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: reservation
+      MARIADB_PASSWORD: reservation
+      MARIADB_DATABASE: scavolini-reservation
+      TZ: Europe/Rome
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-mariadb
+        target: /data
+        volume:
+          nocopy: true
+  reservation:
+    build: .
+    image: scavolini-reservation
+    container_name: reservation
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-reservation
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-reservation-internal
+    environment:
+      - MARIA_DB_HOST=db-reservation
+      - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=waiter
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
+
+networks:
+  scavolini-network:
+  scavolini-reservation-internal:
+
+volumes:
+    data-mariadb:
+    data-rabbitmq:

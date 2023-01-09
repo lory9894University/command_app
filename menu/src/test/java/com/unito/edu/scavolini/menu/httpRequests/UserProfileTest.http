@@ -1,0 +1,20 @@
+### Add user profile
+POST http://localhost:8080/user/addUserProfile
+content-type: application/json
+
+{
+    "email": "ilpetrone@gmail.com",
+    "firstName": "Giovanna",
+    "lastName": "Petrone"
+}
+
+### Get user profiles
+GET http://localhost:8080/user/getUserProfiles
+
+### Delete user profile
+POST http://localhost:8080/user/deleteUserProfile
+content-type: application/json
+
+{
+    "email": "ilpetrone@gmail.com"
+}

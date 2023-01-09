@@ -1,0 +1,87 @@
+ name: comand_app_ci_cd_test
+
+ on:
+   push:
+     branches:
+       - order_management
+
+ jobs:
+
+ # Job to build docker images
+   build_and_push_waiter:
+     name: Build and push waiter image to Docker Hub
+     runs-on: ubuntu-latest
+
+     steps:
+       - name: Check out the repo
+         uses: actions/checkout@v3
+
+       - name: Set up QEMU dependency
+         uses: docker/setup-qemu-action@v1
+
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v1
+
+       - name: Log in to Docker Hub
+         uses: docker/login-action@v2
+         with:
+           username: scavolini
+           password: JQs!LtB4tdRZxNQ
+
+       - name: Build and push kitchen
+         uses: docker/build-push-action@v2
+         with:
+           context: /home/runner/work/command_app/command_app/waiter/
+           push: true
+           platforms: linux/arm64/v8
+           tags: scavolini/comand_app:waiter
+
+   build_and_push_order_management:
+     name: Build and push Docker order_management image to Docker Hub
+     runs-on: ubuntu-latest
+
+     steps:
+       - name: Check out the repo
+         uses: actions/checkout@v3
+
+       - name: Set up QEMU dependency
+         uses: docker/setup-qemu-action@v1
+
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v1
+
+       - name: Log in to Docker Hub
+         uses: docker/login-action@v2
+         with:
+           username: scavolini
+           password: JQs!LtB4tdRZxNQ
+
+       - name: Build and push Docker image
+         uses: docker/build-push-action@v2
+         with:
+           context: /home/runner/work/command_app/command_app/order_management/
+           push: true
+           platforms: linux/arm64/v8
+           tags: scavolini/comand_app:order_management
+
+   compose_raspi:
+     name: Execute docker compose on raspberry
+     needs: [build_and_push_waiter, build_and_push_order_management]
+     runs-on: self-hosted
+
+     steps:
+       - uses: actions/checkout@v3
+
+       - name: Log in to Docker Hub
+         uses: docker/login-action@v2
+         with:
+           username: scavolini
+           password: JQs!LtB4tdRZxNQ
+        
+       - name: Docker compose down and remove old images
+         working-directory: /home/pi/compose_test/
+         run: docker compose down --rmi local --volumes
+
+       - name: Compose order management
+         if: always()
+         run: docker compose -f /home/pi/compose_test/docker-compose.yml up --build -d

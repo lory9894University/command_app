@@ -1,0 +1,32 @@
+### Create new preparation
+POST http://localhost:8080/kitchen/preparations/create
+content-type: application/json
+
+{
+  "name": "pizza di Petrone",
+  "table": "T1"
+}
+
+### Get all preparations
+GET http://localhost:8080/kitchen/preparations
+
+### Change state of preparation to underway
+PUT http://localhost:8080/kitchen/preparations/state/underway/1
+
+### Change state of preparation to ready and it will automatically be sent to the waiter
+PUT http://localhost:8080/kitchen/preparations/state/ready/1
+
+### Get all preparations in kitchen, pizza di Petrone should be gone
+GET http://localhost:8080/kitchen/preparations
+
+### Get all preparations in waiter, pizza di Petrone should be there
+GET http://localhost:8080/waiter/preparations
+
+### set Pizza di Petrone as served
+PUT http://localhost:8080/waiter/preparations/state/delivered/1
+
+### Get all preparations in waiter, pizza di Petrone should be gone
+GET http://localhost:8080/waiter/preparations
+
+
+

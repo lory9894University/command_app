@@ -1,0 +1,119 @@
+version: "3.2"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
+
+  api_gateway:
+    build: .
+    image: api_gateway
+    container_name: api_gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kitchen
+      - waiter
+    networks:
+      - scavolini-network
+    environment:
+      - WAITER_HOST=waiter
+      - WAITER_PORT=8080
+      - KITCHEN_HOST=kitchen
+      - KITCHEN_PORT=8080
+
+  db-kitchen:
+    container_name: db-kitchen
+    image: "mariadb"
+    ports:
+      - "3306:3306"
+    networks:
+      - scavolini-network
+      - scavolini-kitchen-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: kitchen
+      MARIADB_PASSWORD: kitchen
+      MARIADB_DATABASE: scavolini-kitchen
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-db-kitchen
+        target: /data
+        volume:
+          nocopy: true
+
+  kitchen:
+    build: ../kitchen/
+    image: scavolini-kitchen
+    container_name: kitchen
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db-kitchen
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-kitchen-internal
+    environment:
+      - MARIA_DB_HOST=db-kitchen
+      - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=waiter
+
+  db-waiter:
+      container_name: mariadb_waiter
+      image: "mariadb"
+      ports:
+        - "3307:3306"
+      networks:
+        - scavolini-network
+        - scavolini-waiter-internal
+      environment:
+        MARIADB_ROOT_PASSWORD: "root"
+        MARIADB_USER: waiter
+        MARIADB_PASSWORD: waiter
+        MARIADB_DATABASE: waiter
+      restart: unless-stopped
+      volumes:
+        - type: volume
+          source: data-db-waiter
+          target: /data
+          volume:
+            nocopy: true
+
+  waiter:
+    build: ../waiter/
+    image: scavolini-waiter
+    container_name: waiter
+    environment:
+      MARIADB_HOST: mariadb_waiter
+      KITCHEN_HOST: kitchen
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db-waiter
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-waiter-internal
+
+
+
+networks:
+    scavolini-network:
+    scavolini-kitchen-internal:
+    scavolini-waiter-internal:
+
+volumes:
+    data-db-kitchen:
+    data-db-waiter:
+    data-rabbitmq:

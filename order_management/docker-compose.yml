@@ -1,0 +1,61 @@
+version: "3.2"
+services:
+  dbmariadb:
+    container_name: db-order
+    image: "mariadb"
+    ports:
+      - "3306:3306"
+    networks:
+      - scavolini-network
+      - scavolini-order-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: order
+      MARIADB_PASSWORD: order
+      MARIADB_DATABASE: scavolini-order
+      TZ: Europe/Rome
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-mariadb
+        target: /data
+        volume:
+          nocopy: true
+  order:
+    build: .
+    image: scavolini-order
+    container_name: order
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbmariadb
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-order-internal
+    environment:
+      - MARIA_DB_HOST=db-order
+      - RABBITMQ_HOST=rabbitmq
+      - WAITER_HOST=waiter
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
+
+networks:
+    scavolini-network:
+    scavolini-order-internal:
+
+volumes:
+    data-mariadb:
+    data-rabbitmq:

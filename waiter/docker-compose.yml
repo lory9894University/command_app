@@ -1,0 +1,57 @@
+version: "3.2"
+services:
+  dbmariadb:
+    container_name: mariadb_waiter
+    image: "mariadb"
+    ports:
+      - "3307:3306"
+    networks:
+      - scavolini-network
+      - scavolini-waiter-internal
+    environment:
+      MARIADB_ROOT_PASSWORD: "root"
+      MARIADB_USER: waiter
+      MARIADB_PASSWORD: waiter
+      MARIADB_DATABASE: waiter
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-mariadb
+        target: /data
+        volume:
+          nocopy: true
+  waiter:
+    build: .
+    image: scavolini-waiter
+    container_name: scavolini-waiter
+    environment:
+      MARIADB_HOST: mariadb_waiter
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbmariadb
+      - rabbitmq
+    networks:
+      - scavolini-network
+      - scavolini-waiter-internal
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - scavolini-network
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: data-rabbitmq
+        target: /var/lib/rabbitmq
+
+networks:
+  scavolini-network:
+  scavolini-waiter-internal:
+
+volumes:
+  data-mariadb:
+  data-rabbitmq:

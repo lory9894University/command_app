@@ -1,0 +1,55 @@
+###
+POST http://localhost:8080/reservation/create/preorder
+Content-Type: application/json
+
+{
+    "user": {
+        "userId": "456def",
+        "username": "pierfilippo"
+        },
+    "peopleNum": 4,
+    "tableNum": 1,
+    "dateTime": "30-12-2022 14:48:00",
+    "state": "WAITING",
+    "order": {
+        "user": {
+            "userId": "456def",
+            "username": "pierfilippo"
+        },
+        "tableNum": 1,
+        "total": 32,
+        "paymentState": "PAID",
+        "paymentType": "ONLINE",
+        "orderType": "PREORDER",
+        "orderState": "WAITING",
+        "dateTime": "30-12-2022 14:48:00",
+        "preparationList": [
+            {
+                "name": "pizza",
+                "tableNum": 1,
+                "state": "WAITING"
+            },
+            {
+                "name": "pasta",
+                "tableNum": 1,
+                "state": "WAITING"
+            }
+        ]
+    }
+}
+
+###
+POST http://localhost:8080/reservation/create
+Content-Type: application/json
+
+{
+    "user": {
+        "userId": "123abc",
+        "username": "ginetto"
+        },
+    "peopleNum": 4,
+    "tableNum": 1,
+    "dateTime": "30-12-2022 14:48:00",
+    "state": "WAITING",
+    "order": null
+}
