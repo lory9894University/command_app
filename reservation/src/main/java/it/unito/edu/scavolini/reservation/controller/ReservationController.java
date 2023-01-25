@@ -40,7 +40,7 @@ public class ReservationController {
     @Autowired
     RabbitMqSender rabbitMqSender;
 
-    private boolean authEnabled = false;
+    private boolean authEnabled = true;
 
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
