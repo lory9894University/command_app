@@ -1,3 +1,5 @@
+#TODO: fix api_gateway name (change from api_gateway to api-gateway cause of problems with kubernetes)
+#TODO: change menu db name from mariadb_menu to db-menu to conform with others
 version: "3.2"
 services:
   rabbitmq:
@@ -56,7 +58,7 @@ services:
         target: /data
         volume:
           nocopy: true
-          
+
   reservation:
     build: ./reservation/
     image: scavolini-reservation
@@ -90,6 +92,7 @@ services:
         target: /data
         volume:
           nocopy: true
+
   order:
     build: ./order_management/
     image: scavolini-order
@@ -194,7 +197,7 @@ services:
   menu:
     build: ./menu/
     image: scavolini-menu
-    container_name: scavolini-menu
+    container_name: menu
     environment:
       MARIADB_HOST: mariadb_menu
       RABBITMQ_HOST: rabbitmq
