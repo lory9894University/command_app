@@ -28,7 +28,7 @@
 <br>
 
 6. Expose ports of microservices needed. Example:
->kubectl port-forward svc/reservation 8080:8080
+>kubectl port-forward svc/api-gateway 8080:8080
 
 <br>
 
