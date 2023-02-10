@@ -60,7 +60,11 @@ public class Order {
     private User user;
 
     @Transient
-    private String orderName;
+    private String orderUsername;
+
+    // used to transit user between microservices (field user is not serialized in JSON)
+    @Transient
+    private UserTransient userTransient;
 
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);
@@ -81,6 +85,7 @@ public class Order {
 
         return "Order [" +
             "\n\tid=" + id +
+            "\n\tuser=" + (user != null ? user.getUsername() : "null") +
             "\n\ttableNum=" + tableNum +
             "\n\ttotal=" + total +
             "\n\tstate=" + paymentState +

@@ -64,6 +64,10 @@ public class Order {
     @Transient
     private String orderUsername;
 
+    // used to transit user between microservices (field user is not serialized in JSON)
+    @Transient
+    private UserTransient userTransient;
+
     public List<Preparation> addPreparation(Preparation preparation) {
         this.preparationList.add(preparation);
         return this.preparationList;
