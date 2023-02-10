@@ -1,5 +1,3 @@
-#TODO: fix api_gateway name (change from api_gateway to api-gateway cause of problems with kubernetes)
-#TODO: change menu db name from mariadb_menu to db-menu to conform with others
 version: "3.2"
 services:
   rabbitmq:
@@ -16,10 +14,10 @@ services:
         source: data-rabbitmq
         target: /var/lib/rabbitmq
 
-  api_gateway:
+  api-gateway:
     build: api_gateway/.
-    image: api_gateway
-    container_name: api_gateway
+    image: api-gateway
+    container_name: api-gateway
     ports:
       - "8080:8080"
     depends_on:
@@ -76,6 +74,8 @@ services:
   db-order:
     container_name: db-order
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
       - scavolini-network
       - scavolini-order-internal
@@ -140,10 +140,10 @@ services:
       - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
       - WAITER_HOST=waiter
-      - API_GATEWAY_HOST=api_gateway
+      - API_GATEWAY_HOST=api-gateway
 
   db-waiter:
-      container_name: mariadb_waiter
+      container_name: db-waiter
       image: "mariadb"
       networks:
         - scavolini-network
@@ -166,9 +166,9 @@ services:
     image: scavolini-waiter
     container_name: waiter
     environment:
-      MARIADB_HOST: mariadb_waiter
+      MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
-      API_GATEWAY_HOST: api_gateway
+      API_GATEWAY_HOST: api-gateway
     depends_on:
       - db-waiter
       - rabbitmq
@@ -177,7 +177,7 @@ services:
       - scavolini-waiter-internal
 
   db-menu:
-    container_name: mariadb_menu
+    container_name: db-menu
     image: "mariadb"
     networks:
       - scavolini-network
@@ -199,7 +199,7 @@ services:
     image: scavolini-menu
     container_name: menu
     environment:
-      MARIADB_HOST: mariadb_menu
+      MARIADB_HOST: db-menu
       RABBITMQ_HOST: rabbitmq
     restart: unless-stopped
     depends_on:
