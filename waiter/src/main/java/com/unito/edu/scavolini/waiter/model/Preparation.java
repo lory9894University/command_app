@@ -55,4 +55,8 @@ public class Preparation {
     public int getId() {
         return id;
     }
+
+    public String toString() {
+        return "Preparation: " + name + " - Table: " + tableNum + " - State: " + state;
+    }
 }

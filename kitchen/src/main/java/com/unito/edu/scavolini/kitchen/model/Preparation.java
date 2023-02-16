@@ -36,7 +36,7 @@ public class Preparation {
         return name;
     }
 
-    public String getTable() {
+    public String getTableNum() {
         return tableNum;
     }
 

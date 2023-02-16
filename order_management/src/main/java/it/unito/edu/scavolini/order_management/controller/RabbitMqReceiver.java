@@ -33,29 +33,29 @@ public class RabbitMqReceiver {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Method to add to kitchen microservice.
-     * Used to receive the preparation sent from order management microservice.
-     * */
-    @RabbitListener(queues = "kitchen")
-    public void receiveMessageKitchen(@Payload String message) {
-        System.out.println("\n\n[R] Received <" + message + ">");
-
-        objectMapper.registerModule(new JavaTimeModule());
-
-        try {
-            Preparation preparation = objectMapper.readValue(message, Preparation.class);
-            System.out.println("Preparation:\n <" + preparation + ">");
-
-            // reset id in order to add a new entry, otherwise it could overwrite one already present
-            preparation.setId(null);
-
-            //preparationRepository.save(newPreparation);
-
-         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * Method to add to kitchen microservice.
+//     * Used to receive the preparation sent from order management microservice.
+//     * */
+//    @RabbitListener(queues = "kitchen")
+//    public void receiveMessageKitchen(@Payload String message) {
+//        System.out.println("\n\n[R] Received <" + message + ">");
+//
+//        objectMapper.registerModule(new JavaTimeModule());
+//
+//        try {
+//            Preparation preparation = objectMapper.readValue(message, Preparation.class);
+//            System.out.println("Preparation:\n <" + preparation + ">");
+//
+//            // reset id in order to add a new entry, otherwise it could overwrite one already present
+//            preparation.setId(null);
+//
+//            //preparationRepository.save(newPreparation);
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Receive message from waiter on deliveredPreparation queue to mark

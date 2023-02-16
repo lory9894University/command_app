@@ -21,7 +21,7 @@ public class DeliveredPreparationSender {
     private RabbitTemplate template;
 
     @Autowired
-    private Queue queue;
+    private Queue deliveredPreparationsQueue;
 
     /***
      * Send a preparation to the queue on rabbitmq
@@ -34,7 +34,7 @@ public class DeliveredPreparationSender {
         String jsonPreparation;
         try {
             jsonPreparation = objectMapper.writeValueAsString(preparation);
-            this.template.convertAndSend(this.queue.getName(),jsonPreparation );
+            this.template.convertAndSend(this.deliveredPreparationsQueue.getName(),jsonPreparation );
             System.out.println(" [x] Sent '" + preparation + "'");
         } catch (Exception e) {
             throw new RuntimeException("Sending preparation to queue failed: \n", e);
