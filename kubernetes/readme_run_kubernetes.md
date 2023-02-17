@@ -1,34 +1,65 @@
-### Run these commands in the Node hosting the app to run it in Kubernetes
-### Run them in the folder containing the compose file (es. docker-compose-raspi)
+## Follow the instructions below to run the app in Kubernetes
 
-<br>
+---
+
+
+#### Kubernetes will download microservices images from docker hub, if those are not updated (or you want to update them) do the following before dealing with kubernetes:
+
+- Delete old containers and images
+- Run the docker compose in order to create images locally
+- Run the following for tagging images to prepare them for upload
+  > `docker tag scavolini-reservation scavolini/comand_app:reservation` <br>
+  `docker tag scavolini-order scavolini/comand_app:order` <br>
+  `docker tag scavolini-waiter scavolini/comand_app:waiter` <br>
+  `docker tag scavolini-kitchen scavolini/comand_app:kitchen` <br>
+  `docker tag scavolini-menu scavolini/comand_app:menu` <br>
+  `docker tag api-gateway scavolini/comand_app:api-gateway`
+
+- Run the following for uploading images to docker hub
+  > `docker push scavolini/comand_app:reservation` <br>
+  `docker push scavolini/comand_app:order` <br>
+  `docker push scavolini/comand_app:waiter` <br>
+  `docker push scavolini/comand_app:kitchen` <br>
+  `docker push scavolini/comand_app:menu` <br>
+  `docker push scavolini/comand_app:api-gateway`
+
+---
+
+### Run the following commands in the Node hosting the app to run it in Kubernetes
+#### Run them in the folder containing the compose file (es. docker-compose-raspi)
+
+---
 
 1. If kubernetes .yaml files are not present
 
->kompose convert -f .\docker-compose-raspi.yml
+> `kompose convert -f .\docker-compose-raspi.yml`
 
 <br>
 
 2. Start kubernetes cluster
->minikube start
+> `minikube start`
+
+> **NOTE**: if you started minikube before and you have uploaded new images you have first to delete 
+> minikube container, image and **volume** as it will use the old image otherwise stored in its volume
+> instead of downloading the new one from docker hub.
 
 <br>
 
 3. Create deployments, services, volumes and networks
->kubectl apply -f .
+> `kubectl apply -f .`
 
 <br>
 
 4. Ensure all pods are running without errors of type ``CrashLoopBackOff``
->kubectl get pods
+> `kubectl get pods`
     
 5. If not run the following and re-start from point 1
->kubectl delete -f .
+> `kubectl delete -f .`
 
 <br>
 
 6. Expose ports of microservices needed. Example:
->kubectl port-forward svc/api-gateway 8080:8080
+> `kubectl port-forward svc/api-gateway 8080:8080`
 
 <br>
 
