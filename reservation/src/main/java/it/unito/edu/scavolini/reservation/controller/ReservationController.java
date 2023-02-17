@@ -170,6 +170,7 @@ public class ReservationController {
         acceptAndSendOrder(tableNum, savedReservation);
 
         savedReservation.setReservationName(savedReservation.getUser().getUsername());
+        savedReservation.getOrder().setOrderUsername(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 

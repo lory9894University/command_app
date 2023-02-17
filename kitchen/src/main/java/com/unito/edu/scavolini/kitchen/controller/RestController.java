@@ -81,10 +81,8 @@ public class RestController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject preparationJsonObject = new JSONObject();
         preparationJsonObject.put("name", preparation.getName());
-        preparationJsonObject.put("table", preparation.getTableNum());
-        System.out.println(" [x] Sent '" + preparationJsonObject + "'");
+        preparationJsonObject.put("tableNum", preparation.getTableNum());
         try{
-            System.out.println("Trying to send to " + waiter_url + "\n"); // TODO: just to test, remove
             HttpEntity<String> request = new HttpEntity<>(preparationJsonObject.toString(), headers);
             restTemplate.postForEntity("http://" + waiter_url + "/preparations/create", request, String.class);
             System.out.println(" [x] Sent '" + preparationJsonObject + "'");

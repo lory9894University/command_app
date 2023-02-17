@@ -14,7 +14,7 @@ public class Preparation {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "tableNum")
+    @Column(name = "table_num")
     private String tableNum;
 
     @Column(name = "state")
@@ -40,7 +40,7 @@ public class Preparation {
         return tableNum;
     }
 
-    public void setTable(String tableNum) {
+    public void setTableNum(String tableNum) {
         this.tableNum = tableNum;
     }
 
