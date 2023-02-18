@@ -56,7 +56,7 @@ public class Order {
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Transient
