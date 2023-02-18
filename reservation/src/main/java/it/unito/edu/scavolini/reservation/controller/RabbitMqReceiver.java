@@ -27,37 +27,37 @@ public class RabbitMqReceiver {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * TODO: remove, used to test
-     * */
-    @RabbitListener(queues = "preorder")
-    public void receivePreorder(@Payload String message) {
-        System.out.println("\n\nReceived <" + message + ">");
-
-        objectMapper.registerModule(new JavaTimeModule());
-
-        try {
-            Order order = objectMapper.readValue(message, Order.class);
-            order.setId(null);
-            System.out.println("\nOrder:\n <" + order + ">");
-
-            order.setTableNum("RIC_" + order.getTableNum());
-
-            Order savedOrder = orderRepository.save(order);
-
-            for (Preparation preparation : order.getPreparationList()) {
-                Preparation newPreparation = new Preparation();
-                newPreparation.setOrder(savedOrder);
-                newPreparation.setName("RIC_" + preparation.getName());
-                newPreparation.setTableNum(preparation.getTableNum());
-                newPreparation.setState(PreparationStatesEnum.WAITING);
-
-                Preparation savedPreparation = preparationRepository.save(newPreparation);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * TODO: remove, used to test
+//     * */
+//    @RabbitListener(queues = "preorder")
+//    public void receivePreorder(@Payload String message) {
+//        System.out.println("\n\nReceived <" + message + ">");
+//
+//        objectMapper.registerModule(new JavaTimeModule());
+//
+//        try {
+//            Order order = objectMapper.readValue(message, Order.class);
+//            order.setId(null);
+//            System.out.println("\nOrder:\n <" + order + ">");
+//
+//            order.setTableNum("RIC_" + order.getTableNum());
+//
+//            Order savedOrder = orderRepository.save(order);
+//
+//            for (Preparation preparation : order.getPreparationList()) {
+//                Preparation newPreparation = new Preparation();
+//                newPreparation.setOrder(savedOrder);
+//                newPreparation.setName("RIC_" + preparation.getName());
+//                newPreparation.setTableNum(preparation.getTableNum());
+//                newPreparation.setState(PreparationStatesEnum.WAITING);
+//
+//                Preparation savedPreparation = preparationRepository.save(newPreparation);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 

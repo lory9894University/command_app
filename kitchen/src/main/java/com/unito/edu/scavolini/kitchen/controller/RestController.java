@@ -81,8 +81,7 @@ public class RestController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject preparationJsonObject = new JSONObject();
         preparationJsonObject.put("name", preparation.getName());
-        preparationJsonObject.put("table", preparation.getTable());
-        System.out.println(" [x] Sent '" + preparationJsonObject + "'");
+        preparationJsonObject.put("tableNum", preparation.getTableNum());
         try{
             HttpEntity<String> request = new HttpEntity<>(preparationJsonObject.toString(), headers);
             restTemplate.postForEntity("http://" + waiter_url + "/preparations/create", request, String.class);
@@ -120,7 +119,7 @@ public class RestController {
     @PostMapping(value = "/preparations/create" , consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
 
-        return kitchenRepository.save(new Preparation(preparation.getName(), preparation.getTable()));
+        return kitchenRepository.save(new Preparation(preparation.getName(), preparation.getTableNum()));
     }
 
 }

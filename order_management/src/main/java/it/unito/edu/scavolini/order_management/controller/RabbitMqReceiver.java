@@ -5,8 +5,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.unito.edu.scavolini.order_management.enums.PreparationStatesEnum;
 import it.unito.edu.scavolini.order_management.model.Order;
 import it.unito.edu.scavolini.order_management.model.Preparation;
+import it.unito.edu.scavolini.order_management.model.User;
 import it.unito.edu.scavolini.order_management.repository.OrderRepository;
 import it.unito.edu.scavolini.order_management.repository.PreparationRepository;
+import it.unito.edu.scavolini.order_management.repository.UserRepository;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,29 +30,32 @@ public class RabbitMqReceiver {
     @Autowired
     private OrderRepository orderRepository;
 
-    /**
-     * Method to add to kitchen microservice.
-     * Used to receive the preparation sent from order management microservice.
-     * */
-    @RabbitListener(queues = "kitchen")
-    public void receiveMessageKitchen(@Payload String message) {
-        System.out.println("\n\n[R] Received <" + message + ">");
+    @Autowired
+    private UserRepository userRepository;
 
-        objectMapper.registerModule(new JavaTimeModule());
-
-        try {
-            Preparation preparation = objectMapper.readValue(message, Preparation.class);
-            System.out.println("Preparation:\n <" + preparation + ">");
-
-            // reset id in order to add a new entry, otherwise it could overwrite one already present
-            preparation.setId(null);
-
-            //preparationRepository.save(newPreparation);
-
-         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * Method to add to kitchen microservice.
+//     * Used to receive the preparation sent from order management microservice.
+//     * */
+//    @RabbitListener(queues = "kitchen")
+//    public void receiveMessageKitchen(@Payload String message) {
+//        System.out.println("\n\n[R] Received <" + message + ">");
+//
+//        objectMapper.registerModule(new JavaTimeModule());
+//
+//        try {
+//            Preparation preparation = objectMapper.readValue(message, Preparation.class);
+//            System.out.println("Preparation:\n <" + preparation + ">");
+//
+//            // reset id in order to add a new entry, otherwise it could overwrite one already present
+//            preparation.setId(null);
+//
+//            //preparationRepository.save(newPreparation);
+//
+//         } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Receive message from waiter on deliveredPreparation queue to mark
@@ -92,6 +97,13 @@ public class RabbitMqReceiver {
             // reset id in order to add a new entry, otherwise it could overwrite one already present
             order.setId(null);
             System.out.println("\nOrder:\n <" + order + ">");
+
+            // create and save order user (it has been already checked by reservation microservice)
+            User user = new User();
+            user.setUserId(order.getUserTransient().getUserId());
+            user.setUsername(order.getUserTransient().getUsername());
+            User savedUser = userRepository.save(user);
+            order.setUser(savedUser);
 
             Order savedOrder = orderRepository.save(order);
 

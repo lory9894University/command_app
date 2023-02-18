@@ -1,20 +1,20 @@
 package it.unito.edu.scavolini.order_management.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class UserTransient {
 
     @Id
     @Column(name = "user_id")
@@ -23,8 +23,4 @@ public class User {
 
     @Column(name = "username")
     private String username;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    @JsonManagedReference
-    private List<Order> orderList;
 }

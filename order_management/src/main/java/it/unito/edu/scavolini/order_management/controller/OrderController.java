@@ -45,7 +45,7 @@ public class OrderController {
         List<Order> orders = orderRepository.findAll();
         for (Order order : orders) {
             if (order.getUser() != null) {
-                order.setOrderName(order.getUser().getUsername());
+                order.setOrderUsername(order.getUser().getUsername());
             }
         }
 
@@ -108,7 +108,7 @@ public class OrderController {
         }
 
         if (savedOrder.getUser() != null) {
-            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+            savedOrder.setOrderUsername(savedOrder.getUser().getUsername());
         }
         return ResponseEntity.ok(savedOrder);
     }
@@ -128,7 +128,7 @@ public class OrderController {
         Order savedOrder = orderRepository.save(order);
 
         if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
-            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+            savedOrder.setOrderUsername(savedOrder.getUser().getUsername());
         }
         return ResponseEntity.ok(savedOrder);
     }
@@ -148,7 +148,7 @@ public class OrderController {
         Order savedOrder = orderRepository.save(order);
 
         if (savedOrder.getOrderType() != OrderTypeEnum.IN_RESTAURANT) {
-            savedOrder.setOrderName(savedOrder.getUser().getUsername());
+            savedOrder.setOrderUsername(savedOrder.getUser().getUsername());
         }
         return ResponseEntity.ok(savedOrder);
     }

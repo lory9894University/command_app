@@ -6,10 +6,7 @@ import com.google.firebase.auth.FirebaseToken;
 import it.unito.edu.scavolini.reservation.enums.OrderStateEnum;
 import it.unito.edu.scavolini.reservation.enums.PreparationStatesEnum;
 import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
-import it.unito.edu.scavolini.reservation.model.Order;
-import it.unito.edu.scavolini.reservation.model.Preparation;
-import it.unito.edu.scavolini.reservation.model.Reservation;
-import it.unito.edu.scavolini.reservation.model.User;
+import it.unito.edu.scavolini.reservation.model.*;
 import it.unito.edu.scavolini.reservation.repository.OrderRepository;
 import it.unito.edu.scavolini.reservation.repository.PreparationRepository;
 import it.unito.edu.scavolini.reservation.repository.ReservationRepository;
@@ -115,6 +112,7 @@ public class ReservationController {
         }
 
         // set and save Order information while waiting acceptance or rejection
+        reservationOrder.setOrderUsername(reservationUser.getUsername()); // not needed
         reservationOrder.setTableNum("ND");
         reservationOrder.setOrderState(OrderStateEnum.WAITING);
 
@@ -147,7 +145,13 @@ public class ReservationController {
             Preparation savedPreparation = preparationRepository.save(newPreparation);
         }
 
+        // set User information (transient) in Reservation and Order JSON just to return it to the client
         savedReservation.setReservationName(savedReservation.getUser().getUsername());
+        savedReservation.getOrder().setOrderUsername(savedReservation.getUser().getUsername());
+        UserTransient userTransient = new UserTransient();
+        userTransient.setUsername(savedReservation.getUser().getUsername());
+        userTransient.setUserId(savedReservation.getUser().getUserId());
+        savedReservation.getOrder().setUserTransient(userTransient);
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -166,6 +170,7 @@ public class ReservationController {
         acceptAndSendOrder(tableNum, savedReservation);
 
         savedReservation.setReservationName(savedReservation.getUser().getUsername());
+        savedReservation.getOrder().setOrderUsername(savedReservation.getUser().getUsername());
         return ResponseEntity.ok(savedReservation);
     }
 
@@ -180,6 +185,12 @@ public class ReservationController {
                 preparation.setTableNum(tableNum);
                 preparationRepository.save(preparation);
             }
+
+            // set userTransient field to send it to order management (user field is not serialized in JSON)
+            UserTransient userTransient = new UserTransient();
+            userTransient.setUsername(savedReservation.getUser().getUsername());
+            userTransient.setUserId(savedReservation.getUser().getUserId());
+            savedOrder.setUserTransient(userTransient);
             rabbitMqSender.sendPreorder(savedOrder);
         }
     }

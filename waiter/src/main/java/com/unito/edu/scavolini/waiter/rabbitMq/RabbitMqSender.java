@@ -12,16 +12,21 @@ import org.springframework.stereotype.Component;
  * The queue is the one that is used to send the message to the queue on rabbitmq, and it's configured in the RabbitMqConfig class
  */
 @Component
-public class DeliveredPreparationSender {
+public class RabbitMqSender {
 
     //this is a JSON object mapper from library Jackson Databind, it's used to convert a java object to a json string and viceversa
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    private RabbitTemplate template;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private Queue queue;
+    private final Queue deliveredPreparationsQueue;
+
+    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue deliveredPreparationsQueue) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.deliveredPreparationsQueue = deliveredPreparationsQueue;
+    }
 
     /***
      * Send a preparation to the queue on rabbitmq
@@ -34,7 +39,7 @@ public class DeliveredPreparationSender {
         String jsonPreparation;
         try {
             jsonPreparation = objectMapper.writeValueAsString(preparation);
-            this.template.convertAndSend(this.queue.getName(),jsonPreparation );
+            this.rabbitTemplate.convertAndSend(this.deliveredPreparationsQueue.getName(), jsonPreparation );
             System.out.println(" [x] Sent '" + preparation + "'");
         } catch (Exception e) {
             throw new RuntimeException("Sending preparation to queue failed: \n", e);
