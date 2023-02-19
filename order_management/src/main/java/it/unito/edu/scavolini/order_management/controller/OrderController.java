@@ -66,6 +66,7 @@ public class OrderController {
      * */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        System.out.println("\n Order received: " + order);
         User orderUser = order.getUser();
 
         if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT && orderUser == null) {
@@ -91,8 +92,11 @@ public class OrderController {
 
         Order savedOrder = orderRepository.save(order);
 
+        // duplicated list of preparations to avoid concurrent modification exception
+        Preparation[] temp = order.getPreparationList().toArray(new Preparation[0]);
+
         // sending single preparations of the order to the kitchen
-        for (Preparation preparation : order.getPreparationList()) {
+        for (Preparation preparation : temp) {
             Preparation newPreparation = new Preparation();
             newPreparation.setOrder(savedOrder);
             newPreparation.setName(preparation.getName());
