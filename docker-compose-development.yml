@@ -15,7 +15,8 @@ services:
         target: /var/lib/rabbitmq
 
   gateway:
-    image: scavolini/comand_app:api-gateway
+    build: apiGateway/.
+    image: gateway
     container_name: gateway
     ports:
       - "8080:8080"
@@ -56,9 +57,10 @@ services:
         target: /data
         volume:
           nocopy: true
-          
+
   reservation:
-    image: scavolini/comand_app:reservation
+    build: ./reservation/
+    image: scavolini-reservation
     container_name: reservation
     depends_on:
       - db-reservation
@@ -73,6 +75,8 @@ services:
   db-order:
     container_name: db-order
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
       - scavolini-network
       - scavolini-order-internal
@@ -89,8 +93,10 @@ services:
         target: /data
         volume:
           nocopy: true
+
   order:
-    image: scavolini/comand_app:order
+    build: ./order_management/
+    image: scavolini-order
     container_name: order
     depends_on:
       - db-order
@@ -122,7 +128,8 @@ services:
           nocopy: true
 
   kitchen:
-    image: scavolini/comand_app:kitchen
+    build: ./kitchen/
+    image: scavolini-kitchen
     container_name: kitchen
     depends_on:
       - db-kitchen
@@ -134,10 +141,10 @@ services:
       - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
       - WAITER_HOST=waiter
-      - API_GATEWAY_HOST=gateway
+      - API_GATEWAY_HOST=api-gateway
 
   db-waiter:
-      container_name: mariadb_waiter
+      container_name: db-waiter
       image: "mariadb"
       networks:
         - scavolini-network
@@ -156,12 +163,13 @@ services:
             nocopy: true
 
   waiter:
-    image: scavolini/comand_app:waiter
+    build: ./waiter/
+    image: scavolini-waiter
     container_name: waiter
     environment:
-      MARIADB_HOST: mariadb_waiter
+      MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
-      API_GATEWAY_HOST: gateway
+      API_GATEWAY_HOST: api-gateway
     depends_on:
       - db-waiter
       - rabbitmq
@@ -170,7 +178,7 @@ services:
       - scavolini-waiter-internal
 
   db-menu:
-    container_name: mariadb_menu
+    container_name: db-menu
     image: "mariadb"
     networks:
       - scavolini-network
@@ -188,10 +196,11 @@ services:
         volume:
           nocopy: true
   menu:
-    image: scavolini/comand_app:menu
-    container_name: scavolini-menu
+    build: ./menu/
+    image: scavolini-menu
+    container_name: menu
     environment:
-      MARIADB_HOST: mariadb_menu
+      MARIADB_HOST: db-menu
       RABBITMQ_HOST: rabbitmq
     restart: unless-stopped
     depends_on:

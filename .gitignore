@@ -31,11 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
-/api_gateway/mvnw
-/api_gateway/mvnw.cmd
-/api_gateway/target/
-/api_gateway/.idea/
-/api_gateway/.mvn/
+/apiGateway/mvnw
+/apiGateway/mvnw.cmd
+/apiGateway/target/
+/apiGateway/.idea/
+/apiGateway/.mvn/
 /command_app_frontend/cliente/android/.gitignore
 /command_app_frontend/cliente/ios/.gitignore
 /command_app_frontend/cliente/linux/.gitignore
