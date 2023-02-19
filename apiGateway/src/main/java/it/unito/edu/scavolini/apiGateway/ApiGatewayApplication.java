@@ -1,4 +1,4 @@
-package it.unito.edu.scavolini.api_gateway;
+package it.unito.edu.scavolini.apiGateway;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;

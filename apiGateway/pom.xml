@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.unito.edu.scavolini</groupId>
-    <artifactId>api_gateway</artifactId>
+    <artifactId>apiGateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>api_gateway</name>
-    <description>api_gateway</description>
+    <name>apiGateway</name>
+    <description>api gateway</description>
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2022.0.0</spring-cloud.version>
