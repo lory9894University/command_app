@@ -15,7 +15,7 @@ services:
         target: /var/lib/rabbitmq
 
   gateway:
-    image: scavolini/comand_app:api-gateway
+    image: scavolini/comand_app:gateway
     container_name: gateway
     ports:
       - "8080:8080"
@@ -200,6 +200,13 @@ services:
       - scavolini-network
       - scavolini-menu-internal
 
+  frontend:
+    image: scavolini/comand_app:frontend
+    container_name: frontend
+    ports:
+      - 80:80
+    networks:
+      - frontend-network
 
 networks:
     scavolini-network:

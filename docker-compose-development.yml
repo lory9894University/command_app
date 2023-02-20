@@ -16,7 +16,7 @@ services:
 
   gateway:
     build: apiGateway/.
-    image: gateway
+    image: scavolini-gateway
     container_name: gateway
     ports:
       - "8080:8080"
@@ -208,6 +208,7 @@ services:
     networks:
       - scavolini-network
       - scavolini-menu-internal
+
 
 
 networks:
