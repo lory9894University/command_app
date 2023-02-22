@@ -12,15 +12,9 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
 public class UserTransient {
 
-    @Id
-    @Column(name = "user_id")
-    @Length(min = 1, max = 150)
     private String userId;
 
-    @Column(name = "username")
     private String username;
 }
