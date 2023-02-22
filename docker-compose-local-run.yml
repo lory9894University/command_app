@@ -1,5 +1,3 @@
-# docker compose to use if you want to run the project locally.
-# It exposes all DBs to access them from your local machine.
 version: "3.2"
 services:
   rabbitmq:
@@ -16,10 +14,10 @@ services:
         source: data-rabbitmq
         target: /var/lib/rabbitmq
 
-  api-gateway:
-    build: api_gateway/.
-    image: api-gateway
-    container_name: api-gateway
+  gateway:
+    build: apiGateway/.
+    image: gateway
+    container_name: gateway
     ports:
       - "8080:8080"
     depends_on:
@@ -27,6 +25,7 @@ services:
       - waiter
     networks:
       - scavolini-network
+      - frontend-network
     environment:
       - WAITER_HOST=waiter
       - WAITER_PORT=8080
@@ -152,7 +151,7 @@ services:
       container_name: db-waiter
       image: "mariadb"
       ports:
-        - "3309:3306"
+          - "3309:3306"
       networks:
         - scavolini-network
         - scavolini-waiter-internal
@@ -177,7 +176,6 @@ services:
       MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
       API_GATEWAY_HOST: api-gateway
-      RABBITMQ_HOST: rabbitmq
     depends_on:
       - db-waiter
       - rabbitmq
