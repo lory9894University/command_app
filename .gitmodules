@@ -1,0 +1,4 @@
+[submodule "command_app_frontend"]
+	path = command_app_frontend
+	url = git@github.com:lory9894/command_app_frontend.git
+	branch = main
