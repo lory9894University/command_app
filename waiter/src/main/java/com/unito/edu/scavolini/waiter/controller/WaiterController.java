@@ -2,7 +2,6 @@ package com.unito.edu.scavolini.waiter.controller;
 
 import com.unito.edu.scavolini.waiter.enums.PreparationStatesEnum;
 import com.unito.edu.scavolini.waiter.model.Preparation;
-import com.unito.edu.scavolini.waiter.rabbitMq.RabbitMqSender;
 import com.unito.edu.scavolini.waiter.repository.WaiterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

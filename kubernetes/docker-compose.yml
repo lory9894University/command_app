@@ -179,6 +179,7 @@ services:
       MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
       API_GATEWAY_HOST: api-gateway
+      RABBITMQ_HOST: rabbitmq
     depends_on:
       - db-waiter
       - rabbitmq

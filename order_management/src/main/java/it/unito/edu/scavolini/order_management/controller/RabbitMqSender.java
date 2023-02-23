@@ -23,7 +23,7 @@ public class RabbitMqSender {
     @Autowired
     private OrderRepository orderRepository;
 
-    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue kitchenQueue, Queue deliveredPreparationsQueue) {
+    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue kitchenQueue) {
         this.rabbitTemplate = rabbitTemplate;
         this.kitchenQueue = kitchenQueue;
     }
