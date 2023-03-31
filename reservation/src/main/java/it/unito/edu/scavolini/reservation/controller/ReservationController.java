@@ -64,7 +64,6 @@ public class ReservationController {
             return ResponseEntity.badRequest().build();
         }
 
-
         Reservation savedReservation = reservationRepository.save(reservation);
 
         savedReservation.setReservationName(savedReservation.getUser().getUsername());
@@ -95,18 +94,18 @@ public class ReservationController {
 
         // if this is not a Preorder (does not contain an order) send error
         if (reservation.getOrder() == null){
-            return ResponseEntity.badRequest().build(); // TODO send detailer error
+            return ResponseEntity.badRequest().build();
         }
 
 
         //////////////////////////// Reservation Order handling ////////////////////////////
         Order reservationOrder = reservation.getOrder();
 
-        // check Order to match information of Preorder
+        // check Order to match information of Reservation
         if (reservationOrder.getDateTime() == null ||
             !reservationOrder.getDateTime().equals(reservation.getDateTime())) {
             // reservation and order datetime should match
-            return ResponseEntity.badRequest().build(); // TODO send detailer error
+            return ResponseEntity.badRequest().build(); // TODO warning: check if it works, check what client sends
             // other strategy: to force order date time to match reservation date time
             // reservationOrder.setDateTime(reservation.getDateTime());
         }

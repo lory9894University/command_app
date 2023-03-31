@@ -69,16 +69,6 @@ public class Order {
     @Transient
     private UserTransient userTransient;
 
-    public List<Preparation> addPreparation(Preparation preparation) {
-        this.preparationList.add(preparation);
-        return this.preparationList;
-    }
-
-    public List<Preparation> removePreparation(Preparation preparation) {
-        this.preparationList.remove(preparation);
-        return this.preparationList;
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
 

@@ -61,7 +61,7 @@ public class RabbitMqReceiver {
      * Receive message from waiter on deliveredPreparation queue to mark
      * the preparation as delivered and update it in the DB
      *
-     * NOTE: should not still be deleted, cause it could still be needed for the payment
+     * NOTE: should not still be deleted, because it could still be needed for the payment
      * */
     @RabbitListener(queues = "deliveredPreparations")
     public void markDeliveredPreparation(@Payload String message) {
