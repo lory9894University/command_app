@@ -26,6 +26,7 @@ public class Preparation {
     @Enumerated(EnumType.STRING)
     private PreparationStatesEnum state;
 
+    //più preparazioni si riferiscono allo stesso ordine (many to one). A quale ordine? quello specificato nella colonna order_id
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference

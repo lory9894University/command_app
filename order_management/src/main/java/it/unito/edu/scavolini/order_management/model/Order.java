@@ -50,10 +50,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStateEnum orderState;
 
+    //un ordine ha più preparation (one to many), infatti uso una preparation list.
+    //mapped by order (in Preparation), cioè ogni preparation sarà contenuata in una variabile "order" (in Preparation)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
     @JsonManagedReference
     private List<Preparation> preparationList;
 
+    //più ordini si riferiscono allo stesso utente (many to one). A quale utente? quello specificato nella colonna user_id
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "user_id")
@@ -62,7 +65,7 @@ public class Order {
     @Transient
     private String orderUsername;
 
-    // used to transit user between microservices (field user is not serialized in JSON)
+    // used to transit user between microservices (field user is not serialized in JSON, because of the @JsonBackReference annotation in "private User user")
     @Transient
     private UserTransient userTransient;
 
