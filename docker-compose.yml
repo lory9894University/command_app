@@ -3,9 +3,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     networks:
       - scavolini-network
     restart: unless-stopped
@@ -22,6 +19,10 @@ services:
     depends_on:
       - kitchen
       - waiter
+      - menu
+      - order
+      - reservation
+      - rabbitmq
     networks:
       - scavolini-network
       - frontend-network
@@ -41,7 +42,6 @@ services:
     container_name: db-reservation
     image: "mariadb"
     networks:
-      - scavolini-network
       - scavolini-reservation-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -56,7 +56,6 @@ services:
         target: /data
         volume:
           nocopy: true
-          
   reservation:
     image: scavolini/comand_app:reservation
     container_name: reservation
@@ -74,7 +73,6 @@ services:
     container_name: db-order
     image: "mariadb"
     networks:
-      - scavolini-network
       - scavolini-order-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -106,7 +104,6 @@ services:
     container_name: db-kitchen
     image: "mariadb"
     networks:
-      - scavolini-network
       - scavolini-kitchen-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -120,7 +117,6 @@ services:
         target: /data
         volume:
           nocopy: true
-
   kitchen:
     image: scavolini/comand_app:kitchen
     container_name: kitchen
@@ -140,7 +136,6 @@ services:
       container_name: db-waiter
       image: "mariadb"
       networks:
-        - scavolini-network
         - scavolini-waiter-internal
       environment:
         MARIADB_ROOT_PASSWORD: "root"
@@ -154,7 +149,6 @@ services:
           target: /data
           volume:
             nocopy: true
-
   waiter:
     image: scavolini/comand_app:waiter
     container_name: waiter
@@ -174,7 +168,6 @@ services:
     container_name: db-menu
     image: "mariadb"
     networks:
-      - scavolini-network
       - scavolini-menu-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -202,12 +195,12 @@ services:
       - scavolini-menu-internal
 
   frontend:
-    image: scavolini/comand_app:frontend
-    container_name: frontend
-    ports:
-      - 80:80
-    networks:
-      - frontend-network
+     image: scavolini/comand_app:frontend
+     container_name: frontend
+     ports:
+       - 80:80
+     networks:
+       - frontend-network
 
 networks:
     scavolini-network:
