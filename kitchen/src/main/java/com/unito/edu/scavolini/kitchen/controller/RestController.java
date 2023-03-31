@@ -99,7 +99,7 @@ public class RestController {
     }
 
     /***
-     * This method is used to remove preparation to the kitchen, when a waiter picks up the order remove the preparation from the kitchen
+     * This method is used to remove preparation from the kitchen.
      */
     @DeleteMapping("/preparations/remove/{id}")
     public void removePreparation(@PathVariable int id) {
@@ -118,7 +118,6 @@ public class RestController {
      */
     @PostMapping(value = "/preparations/create" , consumes = "application/json")
     public Preparation postPreparation(@RequestBody Preparation preparation) {
-
         return kitchenRepository.save(new Preparation(preparation.getName(), preparation.getTableNum()));
     }
 

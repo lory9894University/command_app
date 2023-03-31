@@ -15,7 +15,6 @@ public class MenuControllerExceptionHandler extends ResponseEntityExceptionHandl
     @ResponseBody
     @ExceptionHandler(InvalidDishException.class)
     protected ResponseEntity<Object> handleInvalidDishException(InvalidDishException e) {
-        System.out.println("pippo");
         System.out.println(e.getMessage());
         return new ResponseEntity<>(new DishErrorMessage(e.getMessage(), e.getDish()), HttpStatus.BAD_REQUEST);
     }

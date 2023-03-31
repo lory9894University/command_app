@@ -16,10 +16,8 @@ public class RabbitMqSender {
 
     @Autowired
     private final RabbitTemplate rabbitTemplate;
-
     @Autowired
     private final Queue kitchenQueue;
-
     @Autowired
     private OrderRepository orderRepository;
 
@@ -29,7 +27,6 @@ public class RabbitMqSender {
     }
 
     public void send(Preparation preparation) {
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
