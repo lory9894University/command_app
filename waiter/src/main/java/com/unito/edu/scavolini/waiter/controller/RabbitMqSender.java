@@ -1,4 +1,4 @@
-package com.unito.edu.scavolini.waiter.rabbitMq;
+package com.unito.edu.scavolini.waiter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unito.edu.scavolini.waiter.model.Preparation;

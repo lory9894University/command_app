@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.unito.edu.scavolini.reservation.enums.ReservationStateEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,12 +23,13 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name = "user_id")
-    @Length(min = 1, max = 150)
-    private String userId;
-
     @Column(name = "username")
-    private String username;
+    @Length(max = 150)
+    private String username; // contains user email from firebase
+
+    @Column(name = "user_id", length = 2000)
+    @Lob
+    private String userId; // contains idtoken from firebase
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     @JsonManagedReference

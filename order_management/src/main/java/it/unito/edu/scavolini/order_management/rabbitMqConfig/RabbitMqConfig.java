@@ -17,12 +17,10 @@ public class RabbitMqConfig {
     public Queue kitchenQueue() {
         return new Queue("kitchen",true);
     }
-
     @Bean
     public Queue preorderQueue() {
         return new Queue("preorder",true);
     }
-
     @Bean
     public Queue deliveredPreparationsQueue() {
         return new Queue("deliveredPreparations",true);

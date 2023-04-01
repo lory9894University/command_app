@@ -1,8 +1,6 @@
 ## Follow the instructions below to run the app in Kubernetes
 
 ---
-
-
 #### Kubernetes will download microservices images from docker hub, if those are not updated (or you want to update them) do the following before dealing with kubernetes:
 
 - Delete old containers and images
@@ -13,7 +11,8 @@
   `docker tag scavolini-waiter scavolini/comand_app:waiter` <br>
   `docker tag scavolini-kitchen scavolini/comand_app:kitchen` <br>
   `docker tag scavolini-menu scavolini/comand_app:menu` <br>
-  `docker tag api-gateway scavolini/comand_app:api-gateway`
+  `docker tag gateway scavolini/comand_app:gateway` <br>
+  `docker tag frontend scavolini/comand_app:frontend`
 
 - Run the following for uploading images to docker hub
   > `docker push scavolini/comand_app:reservation` <br>
@@ -21,18 +20,19 @@
   `docker push scavolini/comand_app:waiter` <br>
   `docker push scavolini/comand_app:kitchen` <br>
   `docker push scavolini/comand_app:menu` <br>
-  `docker push scavolini/comand_app:api-gateway`
+  `docker push scavolini/comand_app:gateway`<br>
+  `docker push scavolini/comand_app:frontend`
 
 ---
 
 ### Run the following commands in the Node hosting the app to run it in Kubernetes
-#### Run them in the folder containing the compose file (es. docker-compose-raspi)
+#### Run them in the folder containing the compose file (es. docker-compose)
 
 ---
 
 1. If kubernetes .yaml files are not present
 
-> `kompose convert -f .\docker-compose-raspi.yml`
+> `kompose convert`
 
 <br>
 
@@ -59,7 +59,8 @@
 <br>
 
 6. Expose ports of microservices needed. Example:
-> `kubectl port-forward svc/api-gateway 8080:8080`
+> `kubectl port-forward svc/gateway 8080:8080`<br>
+> `kubectl port-forward svc/frontend 80:80`
 
 <br>
 

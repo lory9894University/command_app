@@ -12,6 +12,7 @@ import it.unito.edu.scavolini.order_management.model.User;
 import it.unito.edu.scavolini.order_management.repository.OrderRepository;
 import it.unito.edu.scavolini.order_management.repository.PreparationRepository;
 import it.unito.edu.scavolini.order_management.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -45,6 +46,8 @@ public class OrderController {
         List<Order> orders = orderRepository.findAll();
         for (Order order : orders) {
             if (order.getUser() != null) {
+                // initialize the username field because User field is not serialized in JSON and username field is transient
+                // needed to send the username to the client
                 order.setOrderUsername(order.getUser().getUsername());
             }
         }
@@ -66,6 +69,7 @@ public class OrderController {
      * */
     @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        System.out.println("\n Order received: " + order);
         User orderUser = order.getUser();
 
         if (order.getOrderType() != OrderTypeEnum.IN_RESTAURANT && orderUser == null) {
@@ -91,8 +95,11 @@ public class OrderController {
 
         Order savedOrder = orderRepository.save(order);
 
+        // duplicated list of preparations to avoid concurrent modification exception
+        Preparation[] temp = order.getPreparationList().toArray(new Preparation[0]);
+
         // sending single preparations of the order to the kitchen
-        for (Preparation preparation : order.getPreparationList()) {
+        for (Preparation preparation : temp) {
             Preparation newPreparation = new Preparation();
             newPreparation.setOrder(savedOrder);
             newPreparation.setName(preparation.getName());
@@ -154,8 +161,8 @@ public class OrderController {
     }
 
     /**
-     * Scheduled method that checks every 10 seconds if there are new orders to be sent to the kitchen
-     * An order is sent to the kitchen if the delivery time chosen by the user is less than 1 hour
+     * Scheduled method that checks every 10 seconds if there are new orders to be sent to the kitchen.
+     * An order is sent to the kitchen if the delivery time chosen by the user is less than 1 hour from now
      * and it's a delivery/preorder/takeaway order. In restaurant orders are immediately managed during creation.
      * */
     @Scheduled(fixedDelay = 10000)

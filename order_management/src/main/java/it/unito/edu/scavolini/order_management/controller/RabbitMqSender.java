@@ -16,20 +16,17 @@ public class RabbitMqSender {
 
     @Autowired
     private final RabbitTemplate rabbitTemplate;
-
     @Autowired
     private final Queue kitchenQueue;
-
     @Autowired
     private OrderRepository orderRepository;
 
-    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue kitchenQueue, Queue deliveredPreparationsQueue) {
+    public RabbitMqSender(RabbitTemplate rabbitTemplate, Queue kitchenQueue) {
         this.rabbitTemplate = rabbitTemplate;
         this.kitchenQueue = kitchenQueue;
     }
 
     public void send(Preparation preparation) {
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 

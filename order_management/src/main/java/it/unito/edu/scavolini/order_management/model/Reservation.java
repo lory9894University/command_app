@@ -22,7 +22,4 @@ public class Reservation {
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
-//    @OneToOne
-//    @JoinColumn(name = "order_id", referencedColumnName = "id")
-//    private Order order;
 }
