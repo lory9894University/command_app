@@ -81,7 +81,6 @@ public class OrderController {
         if (orderUser != null) { // if the user is registered
             if (authEnabled) {
                 FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
-                System.out.println(firebaseToken);
                 if (firebaseToken == null) {
                     return ResponseEntity.badRequest().build();
                 }
