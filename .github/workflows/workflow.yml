@@ -1,5 +1,5 @@
 name: comand_app_ci_cd
-
+# TODO add other microservices 
 on:
   push:
     branches:
@@ -15,30 +15,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+        # Pulls the repository
       - name: Check out the repo
         uses: actions/checkout@v3
 
+        # Generates VM to build on a specific architecture (in this case we need ARM64) independently on GitHub architecture
       - name: Set up QEMU dependency
         uses: docker/setup-qemu-action@v1
 
+        # Needed to build docker images on a different architecture (in this case we need ARM64)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
+        
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }} 
           password: ${{ secrets.DOCKERHUB_PASSWORD }} 
-
+      
       - name: Build and push waiter
         uses: docker/build-push-action@v2
         with:
+          # Where the command is run (what should build and push)
           context: /home/runner/work/command_app/command_app/waiter/
           push: true
           platforms: linux/arm64/v8
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:waiter
 
-  #Job to build the image for the waiter microservice
+  # Job to build the image for the waiter microservice
   build_and_push_kitchen:
     name: Build and push kitchen image to Docker Hub
     runs-on: ubuntu-latest
@@ -100,6 +104,7 @@ jobs:
   #Job to pull images from Docker Hub and deploy on Raspberry
   compose_raspi:
     name: Execute docker compose on raspberry
+    # Jobs to be executed before compose_raspi
     needs: [build_and_push_waiter, build_and_push_kitchen, build_and_push_api_gateway]
     runs-on: self-hosted
 
@@ -112,9 +117,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }} 
           password: ${{ secrets.DOCKERHUB_PASSWORD }} 
 
-      - name: Docker compose down and remove old images
+      - name: Docker compose down and remove old images and volumes
         run: docker compose down --rmi local --volumes
 
-      - name: Compose order management
+      - name: Run docker compose on raspberry
+        # TODO: add why this
         if: always()
         run: docker compose -f docker-compose-raspi.yml up --build -d
