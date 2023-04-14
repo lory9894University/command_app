@@ -1,6 +1,21 @@
-# Comand_app
+# ComandApp
 ## Description:
-TODO Brief description of the project
+This projects contains two distinguished cross-platform applications (web app + android) whose backend is based on a microservice architecture.
+The application scopes are:
+- **ComandApp - Cliente**: An application for the customers of the restaurant. The customers can:
+  - **Book a table** for a specific date and time and, if they want, provide their order in advance.
+  - **Pre-order** a meal as they are arriving to the restaurant.
+  - Order a **Takeaway** meal and pick it up at the restaurant.
+  - Order a **Delivery** meal and have it delivered at their home.
+- **ComandApp - Gestore**: An application for the restaurant manager. The manager can:
+  - **Visualize and manage the preparations on the kitchen side**, changing the state of the preparations between "waiting", "underway" and "ready".
+  - **Visualize and manage the preparations on the waiter side**, changing the state of the cooked preparations between "to deliver" and "delivered".
+  - **Visualize and manage the bookings**, approving or rejecting them.
+
+## Microservices overview
+- Waiter
+- Kitchen
+
 ## Kubernetes
 for kubernetes deployment follow the instruction in the [kubernetes](kubernetes/README.md) folder
 
