@@ -13,8 +13,31 @@ The application scopes are:
   - **Visualize and manage the bookings**, approving or rejecting them.
 
 ## Microservices overview
-- Waiter
+- Menu
+  - Handles the list of meals and drinks available. 
+  - Can add, remove or update a meal or a drink.
 - Kitchen
+  - Handles the list of preparation for the kitchen side.
+  - The preparation can be in one of the following states:
+    - Waiting (the preparation is waiting to be cooked)
+    - Underway (the preparation is being cooked)
+    - Ready (the preparation is ready to be delivered)
+  - The preparation state can be updated by the kitchen staff.
+- Waiter
+  - Handles the list of preparation for the waiter side.
+  - The preparation can be in one of the following states:
+    - To deliver
+    - Delivered
+  - The preparation state can be updated by the waiter staff.
+- Order
+  - Receives the particular kind of order from the customer.
+  - Sends the preparations to cook to the kitchen based on policies.
+  - Provides the list of orders to the staff.
+  - Accepts or rejects the orders which are not in restaurant orders.
+- Reservation
+  - Receives the reservation from the customer.
+  - Sends the reservation to the order microservice.
+  - Accepts or rejects the reservation or pre-order.
 
 ## Kubernetes
 for kubernetes deployment follow the instruction in the [kubernetes](kubernetes/README.md) folder
