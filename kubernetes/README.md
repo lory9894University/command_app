@@ -44,7 +44,7 @@ _Note: if needed you can also tag and push single images instead of all of them_
 ---
 
 ### Run the following commands in the Node hosting the app to run it in Kubernetes
-#### Run them in the folder containing the compose file that **pulls the images from docker-hub (in our application `docker-compose.yml`)**
+#### Run them in the folder containing the compose file that pulls the images from docker-hub (in our application `docker-compose.yml`)
 
 ---
 
