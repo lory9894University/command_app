@@ -16,7 +16,7 @@ If you have not installed it yet, follow the instruction in the [install-kompose
 #### Kubernetes will download microservices images from docker hub, if those are not updated (or you want to update them) do the following before dealing with kubernetes:
 
 - Delete old containers and images
-- Run the docker compose in order to create images locally
+- Run the docker compose in order to **create images locally**
   - In our application `docker-compose-development.yml`
 - Run the following for tagging images to prepare them for upload
 ```bash
@@ -44,7 +44,7 @@ _Note: if needed you can also tag and push single images instead of all of them_
 ---
 
 ### Run the following commands in the Node hosting the app to run it in Kubernetes
-#### Run them in the folder containing the compose file (es. docker-compose)
+#### Run them in the folder containing the compose file that **pulls the images from docker-hub (in our application `docker-compose.yml`)**
 
 ---
 
