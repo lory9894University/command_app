@@ -1,27 +1,45 @@
 ## Follow the instructions below to run the app in Kubernetes
 
+### Tools needed
+<!-- Check files indexing, Lorenzo guarda se le istruzioni linux sono sensate-->
+**Minikube** is needed to locally run kubernetes. <br>
+If you have not installed it yet, follow the instruction in the [install-minikube](install-minikube.md) markdown file.
+
+**Kompose** is needed to convert docker-compose file to kubernetes .yaml files. <br>
+If you have not installed it yet, follow the instruction in the [install-kompose](install-kompose.md) markdown file.
+
+
+
 ---
+
+
 #### Kubernetes will download microservices images from docker hub, if those are not updated (or you want to update them) do the following before dealing with kubernetes:
 
 - Delete old containers and images
 - Run the docker compose in order to create images locally
+  - In our application `docker-compose-development.yml`
 - Run the following for tagging images to prepare them for upload
-  > `docker tag scavolini-reservation scavolini/comand_app:reservation` <br>
-  `docker tag scavolini-order scavolini/comand_app:order` <br>
-  `docker tag scavolini-waiter scavolini/comand_app:waiter` <br>
-  `docker tag scavolini-kitchen scavolini/comand_app:kitchen` <br>
-  `docker tag scavolini-menu scavolini/comand_app:menu` <br>
-  `docker tag gateway scavolini/comand_app:gateway` <br>
-  `docker tag frontend scavolini/comand_app:frontend`
-
+```bash
+docker tag scavolini-reservation scavolini/comand_app:reservation
+docker tag scavolini-order scavolini/comand_app:order
+docker tag scavolini-waiter scavolini/comand_app:waiter
+docker tag scavolini-kitchen scavolini/comand_app:kitchen
+docker tag scavolini-menu scavolini/comand_app:menu
+docker tag gateway scavolini/comand_app:gateway
+docker tag frontend scavolini/comand_app:frontend
+```
 - Run the following for uploading images to docker hub
-  > `docker push scavolini/comand_app:reservation` <br>
-  `docker push scavolini/comand_app:order` <br>
-  `docker push scavolini/comand_app:waiter` <br>
-  `docker push scavolini/comand_app:kitchen` <br>
-  `docker push scavolini/comand_app:menu` <br>
-  `docker push scavolini/comand_app:gateway`<br>
-  `docker push scavolini/comand_app:frontend`
+```bash
+docker push scavolini/comand_app:reservation
+docker push scavolini/comand_app:order
+docker push scavolini/comand_app:waiter
+docker push scavolini/comand_app:kitchen
+docker push scavolini/comand_app:menu
+docker push scavolini/comand_app:gateway
+docker push scavolini/comand_app:frontend
+```
+
+_Note: if needed you can also tag and push single images instead of all of them_
 
 ---
 
@@ -31,13 +49,16 @@
 ---
 
 1. If kubernetes .yaml files are not present
-
-> `kompose convert`
+```bash
+kompose convert
+```
 
 <br>
 
 2. Start kubernetes cluster
-> `minikube start`
+```bash
+minikube start
+```
 
 > **NOTE**: if you started minikube before and you have uploaded new images you have first to delete 
 > minikube container, image and **volume** as it will use the old image otherwise stored in its volume
@@ -46,22 +67,28 @@
 <br>
 
 3. Create deployments, services, volumes and networks
-> `kubectl apply -f .`
+```bash
+kubectl apply -f .
+```
 
 <br>
 
 4. Ensure all pods are running without errors of type ``CrashLoopBackOff``
-> `kubectl get pods`
-    
-5. If not run the following and re-start from point 1
-> `kubectl delete -f .`
+```bash
+kubectl get pods
+```
 
+5. If not run the following and re-start from point 1
+```bash
+kubectl delete -f .
+```
 <br>
 
 6. Expose ports of microservices needed. Example:
-> `kubectl port-forward svc/gateway 8080:8080`<br>
-> `kubectl port-forward svc/frontend 80:80`
-
+```bash
+kubectl port-forward svc/gateway 8080:8080
+kubectl port-forward svc/frontend 80:80
+```
 <br>
 
 ### WARNING:
