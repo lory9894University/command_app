@@ -6,6 +6,7 @@ target/
 
 ### kubernetes folder ###
 kubernetes/*.yaml
+!kubernetes/docker-compose_old.yml
 !kubernetes/docker-compose.yml
 
 ### STS ###
