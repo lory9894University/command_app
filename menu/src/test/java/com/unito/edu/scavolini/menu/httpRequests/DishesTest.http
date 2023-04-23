@@ -3,10 +3,10 @@ POST http://localhost:8080/menu/addDish
 content-type: application/json
 
 {
-  "name": "dish1",
-  "price": 100,
-  "description": "This is the final Petrone, the real one, the one that will make you happy, the one that will make you cry, the one that will make you feel alive again",
-  "course": "Petrone"
+  "name": "Pollo alla cacciatora",
+  "price": 12.99,
+  "description": "Pollo alla cacciatora is a classic Italian dish of chicken braised in a tomato sauce with onions, garlic, herbs, and sometimes olives and capers. It is traditionally cooked in a casserole dish in the oven, but can also be made in a skillet on the stove top.",
+  "course": "Secondo"
 }
 
 ### Add list of dishes
@@ -14,18 +14,54 @@ POST http://localhost:8080/menu/addDishes
 content-type: application/json
 
 [
-    {
-        "name": "The infamous Petrone",
-        "price": 72.82,
-        "description": "This is definately an infamous Petrone, this one will make you feel like you are in heaven, this one will make you feel like you are in hell, this one will make you feel like you are in the middle of nowhere",
-        "course": "Petrone"
-    },
-    {
-        "name": "The standard Petrone",
-        "price": 14.99,
-        "description": "This is a normal Petrone, nothing special, nothing to write home about, just a normal Petrone",
-        "course": "Petrone"
-    }
+  {
+    "name": "Pollo alla cacciatora",
+    "price": 12.99,
+    "description": "Pollo alla cacciatora is a classic Italian dish of chicken braised in a tomato sauce with onions, garlic, herbs, and sometimes olives and capers.",
+    "course": "Primo"
+  },
+  {
+    "name": "Risotto alla milanese",
+    "price": 13.99,
+    "description": "Risotto alla milanese is a classic Italian dish of rice cooked in a broth with saffron, butter, and grated Parmesan cheese.",
+    "course": "Primo"
+  },
+  {
+    "name": "Parmigiana di melanzane",
+    "price": 14.99,
+    "description": "Parmigiana di melanzane is a classic Italian dish of eggplant baked in a tomato sauce with mozzarella cheese.",
+    "course": "Primo"
+  },
+  {
+    "name": "Roast beef",
+    "price": 15.99,
+    "description": "Roast beef is a classic English dish of beef roasted in the oven. It is traditionally cooked in a casserole dish.",
+    "course": "Secondo"
+  },
+  {
+    "name": "Roast chicken",
+    "price": 16.99,
+    "description": "Roast chicken is a classic English dish of chicken roasted in the oven.",
+    "course": "Secondo"
+  },
+  {
+    "name": "English breakfast",
+    "price": 17.99,
+    "description": "English breakfast is a classic English dish of bacon, eggs, sausages, beans, mushrooms, tomatoes, and toast.",
+    "course": "Colazione"
+  },
+  {
+    "name": "Coppo di Vino",
+    "price": 18.99,
+    "description": "Coppo di Vino is a classic Italian dessert of wine jelly with whipped cream.",
+    "course": "Dessert"
+  },
+  {
+    "name": "Capecchi Cola",
+    "price": 3.99,
+    "description": "Capecchi Cola is like a Coca Cola, but with a bit more of a Tuscany taste.",
+    "course": "Bevanda"
+  }
 ]
 
 ### Get all dishes
@@ -37,9 +73,10 @@ content-type: application/json
 
 {
     "id": 1,
-    "name": "The UNreal Petrino",
-    "price": 666,
-    "description": "This is not a Petrone, this is a Petrino, the one that will make you sad, the one that will make you cry, the one that will make you feel dead again"
+    "name": "Pollo con patate e carciofi",
+    "price": 12.99,
+    "description": "Pollo con patate e carciofi, is a classic Italian dish of chicken braised in a tomato sauce with onions, garlic, herbs, and sometimes olives and capers. It is traditionally cooked in a casserole dish in the oven, but can also be made in a skillet on the stove top.",
+    "course": "Secondo"
 }
 
 ### Delete dish
@@ -49,3 +86,6 @@ content-type: application/json
 {
   "id": 1
 }
+
+### Delete all dishes
+POST http://localhost:8080/menu/deleteAllDishes
