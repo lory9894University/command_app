@@ -3,6 +3,9 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - scavolini-network
     restart: unless-stopped
@@ -11,7 +14,7 @@ services:
         source: data-rabbitmq
         target: /var/lib/rabbitmq
 
-  gateway:
+  api-gateway:
     image: scavolini/comand_app:gateway
     container_name: gateway
     ports:
@@ -19,10 +22,6 @@ services:
     depends_on:
       - kitchen
       - waiter
-      - menu
-      - order
-      - reservation
-      - rabbitmq
     networks:
       - scavolini-network
       - frontend-network
@@ -41,7 +40,10 @@ services:
   db-reservation:
     container_name: db-reservation
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
+      - scavolini-network
       - scavolini-reservation-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -56,9 +58,12 @@ services:
         target: /data
         volume:
           nocopy: true
+
   reservation:
     image: scavolini/comand_app:reservation
     container_name: reservation
+    ports:
+      - "8080:8080"
     depends_on:
       - db-reservation
       - rabbitmq
@@ -72,7 +77,10 @@ services:
   db-order:
     container_name: db-order
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
+      - scavolini-network
       - scavolini-order-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -87,9 +95,12 @@ services:
         target: /data
         volume:
           nocopy: true
+
   order:
     image: scavolini/comand_app:order
     container_name: order
+    ports:
+      - "8080:8080"
     depends_on:
       - db-order
       - rabbitmq
@@ -103,7 +114,10 @@ services:
   db-kitchen:
     container_name: db-kitchen
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
+      - scavolini-network
       - scavolini-kitchen-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -117,9 +131,12 @@ services:
         target: /data
         volume:
           nocopy: true
+
   kitchen:
     image: scavolini/comand_app:kitchen
     container_name: kitchen
+    ports:
+      - "8080:8080"
     depends_on:
       - db-kitchen
       - rabbitmq
@@ -130,12 +147,15 @@ services:
       - MARIA_DB_HOST=db-kitchen
       - RABBITMQ_HOST=rabbitmq
       - WAITER_HOST=waiter
-      - API_GATEWAY_HOST=gateway
+      - API_GATEWAY_HOST=api-gateway
 
   db-waiter:
       container_name: db-waiter
       image: "mariadb"
+      ports:
+        - "3306:3306"
       networks:
+        - scavolini-network
         - scavolini-waiter-internal
       environment:
         MARIADB_ROOT_PASSWORD: "root"
@@ -149,13 +169,16 @@ services:
           target: /data
           volume:
             nocopy: true
+
   waiter:
     image: scavolini/comand_app:waiter
     container_name: waiter
+    ports:
+      - "8080:8080"
     environment:
       MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
-      API_GATEWAY_HOST: gateway
+      API_GATEWAY_HOST: api-gateway
       RABBITMQ_HOST: rabbitmq
     depends_on:
       - db-waiter
@@ -167,7 +190,10 @@ services:
   db-menu:
     container_name: db-menu
     image: "mariadb"
+    ports:
+      - "3306:3306"
     networks:
+      - scavolini-network
       - scavolini-menu-internal
     environment:
       MARIADB_ROOT_PASSWORD: "root"
@@ -183,7 +209,9 @@ services:
           nocopy: true
   menu:
     image: scavolini/comand_app:menu
-    container_name: scavolini-menu
+    container_name: menu
+    ports:
+      - "8080:8080"
     environment:
       MARIADB_HOST: db-menu
       RABBITMQ_HOST: rabbitmq
@@ -193,14 +221,15 @@ services:
     networks:
       - scavolini-network
       - scavolini-menu-internal
-
+  
   frontend:
-     image: scavolini/comand_app:frontend
-     container_name: frontend
-     ports:
-       - 80:80
-     networks:
-       - frontend-network
+    image: scavolini/comand_app:frontend
+    container_name: frontend
+    ports:
+      - 80:80
+    networks:
+      - frontend-network
+
 
 networks:
     scavolini-network:
