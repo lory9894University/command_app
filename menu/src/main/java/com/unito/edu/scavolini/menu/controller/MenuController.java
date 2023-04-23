@@ -56,6 +56,13 @@ public class MenuController {
         return ResponseEntity.ok(dishToDelete);
     }
 
+    @PostMapping(value = "/deleteAllDishes")
+    public ResponseEntity<List<Dish>> deleteAllDishes() {
+        List<Dish> dishesToDelete = dishRepository.findAll();
+        dishRepository.deleteAll();
+        return ResponseEntity.ok(dishesToDelete);
+    }
+
     /** For each field in the dishUpdate object, if it is not null, update the corresponding field in the dishToUpdate
      * object
      * @param dishUpdate the dishUpdate object containing the dish id and the values of the fields to update
