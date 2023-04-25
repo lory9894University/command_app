@@ -12,7 +12,6 @@ import it.unito.edu.scavolini.order_management.model.User;
 import it.unito.edu.scavolini.order_management.repository.OrderRepository;
 import it.unito.edu.scavolini.order_management.repository.PreparationRepository;
 import it.unito.edu.scavolini.order_management.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,8 @@ public class OrderController {
 
     @Autowired
     private RabbitMqSender rabbitMqSender;
+
+    private boolean authEnabled = true;
 
     @GetMapping("/orders")
     public ResponseEntity<List<Order>> getAllOrders(){
@@ -77,18 +79,20 @@ public class OrderController {
         }
 
         if (orderUser != null) { // if the user is registered
-            FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
-            if (firebaseToken == null) {
-                return ResponseEntity.badRequest().build();
+            if (authEnabled) {
+                FirebaseToken firebaseToken = checkFirebaseAuth(order.getUser().getUserId());
+                if (firebaseToken == null) {
+                    return ResponseEntity.badRequest().build();
+                }
+                orderUser.setUserId(firebaseToken.getUid());
+                orderUser.setUsername(firebaseToken.getName());
             }
-            orderUser.setUserId(firebaseToken.getUid());
-            orderUser.setUsername(firebaseToken.getName());
             User savedUser = userRepository.save(orderUser);
             order.setUser(savedUser);
         }
 
         if (order.getDateTime() == null) {
-            order.setDateTime(LocalDateTime.now());
+            order.setDateTime(dateTimeNow());
         } else {
             order.setDateTime(order.getDateTime());
         }
@@ -188,12 +192,18 @@ public class OrderController {
     private List<Order> getOrdersToPrepare() {
         List<Order> ordersToPrepare = new ArrayList<>();
         ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
-            OrderStateEnum.ACCEPTED, OrderTypeEnum.DELIVERY, LocalDateTime.now().plusHours(1)));
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.DELIVERY, dateTimeNow().plusHours(1)));
         ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
-            OrderStateEnum.ACCEPTED, OrderTypeEnum.TAKEAWAY, LocalDateTime.now().plusHours(1)));
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.TAKEAWAY, dateTimeNow().plusHours(1)));
         ordersToPrepare.addAll(orderRepository.findAllByOrderStateAndOrderTypeAndDateTimeBefore(
-            OrderStateEnum.ACCEPTED, OrderTypeEnum.PREORDER, LocalDateTime.now().plusHours(1)));
+            OrderStateEnum.ACCEPTED, OrderTypeEnum.PREORDER, dateTimeNow().plusHours(1)));
+
         return ordersToPrepare;
+    }
+
+    @GetMapping("/time-now") // TODO: used to test time zone
+    public void testDateTimeNow(){
+        System.out.println("\n\nDateTimeNow with Time Zone = " + dateTimeNow());
     }
 
     private FirebaseToken checkFirebaseAuth(String idToken) {
@@ -204,6 +214,16 @@ public class OrderController {
             return null;
         }
         return decodedToken;
+    }
+
+    @GetMapping(value = "/switchauth")
+    public ResponseEntity<String> switchAuth(){ // TODO: INSECURE - USED TO TEST - DELETE
+        this.authEnabled = !this.authEnabled;
+        return ResponseEntity.ok("||||||||||||| Auth enabled: " + this.authEnabled + " |||||||||||||");
+    }
+
+    private LocalDateTime dateTimeNow(){
+        return LocalDateTime.now(ZoneId.of("Europe/Rome"));
     }
 
 

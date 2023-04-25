@@ -100,7 +100,93 @@ jobs:
           platforms: linux/arm64/v8
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:api_gateway
 
+  #Job to build the image for the menu microservice
+  build_and_push_menu:
+    name: Build and push menu image to Docker Hub
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push menu
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/menu/
+          push: true
+          platforms: linux/arm64/v8
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:menu
+  
+  #Job to build the image for the order_management microservice
+  build_and_push_order_management:
+    name: Build and push order_management image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push order_management
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/order_management/
+          push: true
+          platforms: linux/arm64/v8
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:order_management
+    
+  #Job to build the image for the reservation microservice
+  build_and_push_reservation:
+    name: Build and push reservation image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push reservation
+        uses: docker/build-push-action@v2
+        with:
+          context: /home/runner/work/command_app/command_app/reservation/
+          push: true
+          platforms: linux/arm64/v8
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/comand_app:reservation
+    
   #Job to pull images from Docker Hub and deploy on Raspberry
   compose_raspi:
     name: Execute docker compose on raspberry
