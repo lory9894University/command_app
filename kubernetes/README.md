@@ -17,7 +17,9 @@ If you have not installed it yet, follow the instruction in the [install-kompose
 
 - Delete old containers and images
 - Run the docker compose in order to **create images locally**
-  - In our application `docker-compose-development.yml`
+  - In our application
+    - `docker-compose-development.yml` for the backend in the root folder
+    - `docker-compose.yml` for the frontend in the root of the frontend repository
 - Run the following for tagging images to prepare them for upload
 ```bash
 docker tag scavolini-reservation scavolini/comand_app:reservation
@@ -25,9 +27,13 @@ docker tag scavolini-order scavolini/comand_app:order
 docker tag scavolini-waiter scavolini/comand_app:waiter
 docker tag scavolini-kitchen scavolini/comand_app:kitchen
 docker tag scavolini-menu scavolini/comand_app:menu
-docker tag gateway scavolini/comand_app:gateway
+docker tag scavolini-gateway scavolini/comand_app:gateway
+```
+- If needed also tag the frontend image
+```bash
 docker tag frontend scavolini/comand_app:frontend
 ```
+
 - Run the following for uploading images to docker hub
 ```bash
 docker push scavolini/comand_app:reservation
@@ -36,6 +42,9 @@ docker push scavolini/comand_app:waiter
 docker push scavolini/comand_app:kitchen
 docker push scavolini/comand_app:menu
 docker push scavolini/comand_app:gateway
+```
+- If needed also push the frontend image
+```bash
 docker push scavolini/comand_app:frontend
 ```
 
