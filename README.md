@@ -4,7 +4,7 @@ This projects contains two distinguished cross-platform applications (web app + 
 The application scopes are:
 - **ComandApp - Cliente**: An application for the customers of the restaurant. The customers can:
   - **Book a table** for a specific date and time and, if they want, provide their order in advance.
-  - **Pre-order** a meal as they are arriving to the restaurant.
+  - **Pre-order** a meal to be prepared for the time of the reservation.
   - Order a **Takeaway** meal and pick it up at the restaurant.
   - Order a **Delivery** meal and have it delivered at their home.
 - **ComandApp - Gestore**: An application for the restaurant manager. The manager can:
@@ -40,7 +40,7 @@ The application scopes are:
   - Accepts or rejects the reservation or pre-order.
 
 ## Kubernetes
-for kubernetes deployment follow the instruction in the [kubernetes](kubernetes/README.md) folder
+For kubernetes deployment follow the instruction in the [kubernetes](kubernetes/README.md) folder
 
 ## Docker
 Docker deployment can be done separately for each microservice or using docker-compose.
