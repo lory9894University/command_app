@@ -95,8 +95,14 @@ kubectl delete -f .
 
 6. Expose ports of microservices needed. Example:
 ```bash
-kubectl port-forward svc/gateway 8080:8080
-kubectl port-forward svc/frontend 80:80
+kubectl port-forward svc/gateway 8080:8080 --address='0.0.0.0'
+sudo -E kubectl port-forward svc/frontend 80:80
+```
+The parameter ``--address=`` is needed to make the service available from outside the node (otherwise it will only listen to requests made from localhost).
+If you cannot use sudo, you can use the following command instead:
+```bash
+kubectl port-forward svc/frontend 8080:8080 --address='0.0.0.0'
+kubectl port-forward svc/frontend 8081:80
 ```
 <br>
 
