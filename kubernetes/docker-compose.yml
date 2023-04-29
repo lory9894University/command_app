@@ -3,6 +3,9 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - scavolini-network
     restart: unless-stopped
@@ -43,6 +46,8 @@ services:
     image: "mariadb"
     networks:
       - scavolini-reservation-internal
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: "root"
       MARIADB_USER: reservation
@@ -56,9 +61,12 @@ services:
         target: /data
         volume:
           nocopy: true
+
   reservation:
     image: scavolini/comand_app:reservation
     container_name: reservation
+    ports:
+      - "8080:8080"
     depends_on:
       - db-reservation
       - rabbitmq
@@ -74,6 +82,8 @@ services:
     image: "mariadb"
     networks:
       - scavolini-order-internal
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: "root"
       MARIADB_USER: order
@@ -90,6 +100,8 @@ services:
   order:
     image: scavolini/comand_app:order
     container_name: order
+    ports:
+      - "8080:8080"
     depends_on:
       - db-order
       - rabbitmq
@@ -105,6 +117,8 @@ services:
     image: "mariadb"
     networks:
       - scavolini-kitchen-internal
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: "root"
       MARIADB_USER: kitchen
@@ -120,6 +134,8 @@ services:
   kitchen:
     image: scavolini/comand_app:kitchen
     container_name: kitchen
+    ports:
+      - "8080:8080"
     depends_on:
       - db-kitchen
       - rabbitmq
@@ -137,6 +153,8 @@ services:
       image: "mariadb"
       networks:
         - scavolini-waiter-internal
+      ports:
+      - "3306:3306"
       environment:
         MARIADB_ROOT_PASSWORD: "root"
         MARIADB_USER: waiter
@@ -152,6 +170,8 @@ services:
   waiter:
     image: scavolini/comand_app:waiter
     container_name: waiter
+    ports:
+      - "8080:8080"
     environment:
       MARIADB_HOST: db-waiter
       KITCHEN_HOST: kitchen
@@ -169,6 +189,8 @@ services:
     image: "mariadb"
     networks:
       - scavolini-menu-internal
+    ports:
+      - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: "root"
       MARIADB_USER: menu
@@ -184,6 +206,8 @@ services:
   menu:
     image: scavolini/comand_app:menu
     container_name: scavolini-menu
+    ports:
+      - "8080:8080"
     environment:
       MARIADB_HOST: db-menu
       RABBITMQ_HOST: rabbitmq
