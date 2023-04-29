@@ -75,8 +75,6 @@ services:
   db-order:
     container_name: db-order
     image: "mariadb"
-    ports:
-      - "3306:3306"
     networks:
       - scavolini-network
       - scavolini-order-internal

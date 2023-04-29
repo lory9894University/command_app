@@ -203,13 +203,12 @@ public class ReservationController {
         reservation.setState(ReservationStateEnum.REJECTED);
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // if there is an Order this is a Preorder, the Order should be sent to Order management
-        // TODO: It could not be sent because it's rejected, to decide
+        // if there is an Order this is a Preorder, the Order is not sent because it's rejected
         Order reservationOrder = savedReservation.getOrder();
         if (reservationOrder != null){
             reservationOrder.setOrderState(OrderStateEnum.REJECTED);
             Order savedOrder = orderRepository.save(reservationOrder);
-            rabbitMqSender.sendPreorder(savedOrder);
+            // rabbitMqSender.sendPreorder(savedOrder);
         }
 
         savedReservation.setReservationName(savedReservation.getUser().getUsername());
